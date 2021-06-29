@@ -1,23 +1,6 @@
 CACHE MANIFEST 
 # NIGHT KING 6.72 fw V4.7 manual web
 
-1.jpg
-2.jpg
-3.jpg
-4.jpg
-5.jpg
-6.jpg
-7.jpg
-avatar.bin
-binLoader.bin
-cache.bin
-EAP.bin
-exp_loader.js
-goldhen_1.1_672.bin
-GTA132.bin
-GTAV100.bin
-GTAV127.bin
-GTAVBeefQueefMod133.bin
 GTAVLamance132.bin
 hen213.bin
 hen213b.bin
@@ -60,9 +43,26 @@ rifrenamer.bin
 spoofer.bin
 vue.js
 WebRTE.bin
-activator\index.html
+1.jpg
+2.jpg
+3.jpg
+4.jpg
+5.jpg
+6.jpg
+7.jpg
+avatar.bin
+binLoader.bin
+cache.bin
+EAP.bin
+exp_loader.js
+goldhen_1.1_672.bin
+GTA132.bin
+GTAV100.bin
+GTAV127.bin
+GTAVBeefQueefMod133.bin
 activator\bg.jpg
 activator\frontend.js
+activator\index.html
 activator\payload.js
 activator\common\exploit.js
 activator\common\helpers.js
