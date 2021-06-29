@@ -29,9 +29,9 @@
  <nav class="transparent" ><!-- navbar start -->
   <div class="nav-wrapper">
    <a href="javascript:void(0)" class="brand-logo left" style="text-shadow: 4px 4px 4px black;">NIGHT KING v4.7 - 6.72 FW Manual</a> 
+ 
    <ul id="nav-mobile" class="right"><!-- navbar links -->
-   
-    <li class="waves-effect waves-light" v-if="lang!=='fa'" @click="changeLang('fa')"><a>فارسی</a></li>
+   <li class="waves-effect waves-light" v-if="lang!=='fa'" @click="changeLang('fa')"><a>فارسی</a></li>
     <li class="waves-effect waves-light" v-if="lang!=='eng'" @click="changeLang('eng')"><a>English</a></li>
     <li class="waves-effect waves-light" v-if="!isPayloadShow" @click="showMain"><a>{{changeText("صفحه اصلی","Main Page")}}</a></li>
     <li class="waves-effect waves-light" v-if="!isThemesShow" @click="showTheme"><a>{{changeText("تم ها","Themes")}}</a></li>
@@ -40,10 +40,13 @@
    </ul>
   </div>
  </nav><!-- navbar end -->
+
   
   <div class="loader" v-if="isLoaderShow">
+  <a href= "http://night-king-host.com/Trainer/index.html" style="color: blue;text-shadow: 4px 4px 4px black;">PS4 Offline Trainer</a>
    <a  class="button" style="color: green;text-shadow: 4px 4px 4px black; font-weight: bold;">Pass = <span id=passCounter></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-   <span id="msgs2" style="text-shadow: 4px 4px 4px black;">
+
+  <span id="msgs2" style="text-shadow: 4px 4px 4px black;">
     {{changeText("Status","Status","")}}
    </span>   
    <span id="temp" >
@@ -65,8 +68,8 @@
   <div id="detail" class="detail" v-show="isDetailShow" :style="lang=='eng' ? 'direction:ltr;text-align:left;float:left;' : 'direction:rtl;text-align:right;float:right;' " ><!-- tozihat-->
 
   </div>
-  
-  <div class="theme" v-show="isThemesShow"><!-- themes start -->
+
+    <div class="theme" v-show="isThemesShow"><!-- themes start -->
     
     <div class="card" v-for="theme,key in themes" @click="changeTheme(key)">
      <div class="card-image">
@@ -336,7 +339,7 @@ window.failCounter.innerHTML=localStorage.failcount;
      this.isThemesShow = false
      this.isAboutUsShow = false
      this.isLoaderShow = true
-	 this.isDonationShow = false
+	   this.isDonationShow = false
     },
     showTheme:function(){
      this.isLoaderShow = false
@@ -419,6 +422,11 @@ window.failCounter.innerHTML=localStorage.failcount;
     this.changeTheme(this.selectedTheme)
     fetch('counter.php?from=672_new2')
    },
+   loadtrainer:function(){
+   var link = document.createElement('a');
+   document.body.appendChild(link);
+   link.href = 'http://night-king-host.com/Trainer/index.html';
+   link.click();}
   })
 </script>
  <script type="text/javascript">
