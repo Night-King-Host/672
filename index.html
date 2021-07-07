@@ -69,6 +69,12 @@
   </div><!-- payloads list end -->
 
   <div id="gta" class="payloads" v-show="isGtaShow"><!-- gta payloads list start -->
+  
+    <div class="tile" @click="showMain()">
+     <img src="icons/gtav.png" >
+     <p class="white-text" >{{changeText("بازگشت به منو","Back To Menu")}}</p>
+    </div>
+    
     <div v-for="payload,key in GTA" @click="loadPlayload('gta'+key)" @mouseover="hover('gta'+key)" @mouseleave="hover()" class="tile">
      <img :src="''+payload.icon" >
      <p class="white-text" >{{payload.name}}</p>
