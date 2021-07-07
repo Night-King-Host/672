@@ -67,6 +67,15 @@
     <p class="white-text" >{{payload.name}}</p>
    </div>   
   </div><!-- payloads list end -->
+
+  <div id="gta" class="payloads" v-show="isGtaShow"><!-- gta payloads list start -->
+    <div v-for="payload,key in GTA" @click="loadPlayload('gta'+key)" @mouseover="hover('gta'+key)" @mouseleave="hover()" class="tile">
+     <img :src="''+payload.icon" >
+     <p class="white-text" >{{payload.name}}</p>
+    </div>   
+   </div><!-- gta payloads list end -->
+
+
   <div id="detail" class="detail" v-show="isDetailShow" :style="lang=='eng' ? 'direction:ltr;text-align:left;float:left;' : 'direction:rtl;text-align:right;float:right;' " ><!-- tozihat-->
 
   </div>
@@ -152,6 +161,7 @@ window.failCounter.innerHTML=localStorage.failcount;
     isThemesShow:false,
 	isDonationShow:false,
     isAboutUsShow:false,
+    isGtaShow:false,
     isDetailShow:false,
     isAnimate1Show:false,
     lang:localStorage.getItem("lang"),
@@ -192,11 +202,15 @@ window.failCounter.innerHTML=localStorage.failcount;
      {name:"Linux.Internal",icon:"icons/linux.png",eng_detail:"Boot Linux from internal HDD",fa_detail:"لودر مخصوص اجرای لینوکس از طریق  HDD داخلی."},
      {name:"Rif.Renamer",icon:"icons/ps4debug.png",eng_detail:"Rif Renamer v1 By AIAzif - Changes the installed games Licence type from FAKE to FREE - Use this to fix games that will not work with regular HEN if you originally installed games using MiraHen you might have this problem.",fa_detail:"تغییر لایسنس بازیهای نصب شده که با ارسال پیلود Hen قفل آنها باز نمیشود (بدلیل نصب بازی با MiraHen) - پس از ارسال این پیلود مشکل مذکور برطرف خواهد شد!"},
      {name:"Web Activator",icon:"icons/Web_Activitore.png",eng_detail:"PS4 Offline Account Activator is a Web payload to activate your PSN accounts on Jailbroken PS4 consoles for exporting save data to USB and more! ",fa_detail:"پیلودی برای اکتیو کردن حساب پی اس ان شما بمنظور کپی کردن فایل سیو بازیها در حافظه ی یو اس بی و ... !"},
-        {name:"GTAV.ArabicGuy.1.00",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.00 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+L1",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.00 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان L1+R1 را بفشارید."},
-        {name:"GTAV.ArabicGuy.1.27",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.27 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.27 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	
-        {name:"GTAV.ArabicGuy.1.32",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
-		{name:"GTAV.Lamance.1.32",icon:"icons/gtav.png",eng_detail:"Active Lamance Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Lamance برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
-        {name:"GTAV.BeefQueef.1.33",icon:"icons/gtav.png",eng_detail:"Active BeefQueef Trainer for Grand Theft Auto V Game Version 1.33 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر BeefQueef برای بازی Grand Theft Auto V نسخه 1.33 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	 
+     {name:"GTAV PAYLOADS",icon:"icons/gtav.png",eng_detail:"",fa_detail:""},
+     ],
+
+    GTA:[
+     {name:"GTAV.ArabicGuy.1.00",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.00 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+L1",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.00 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان L1+R1 را بفشارید."},
+     {name:"GTAV.ArabicGuy.1.27",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.27 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.27 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	
+     {name:"GTAV.ArabicGuy.1.32",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
+	   {name:"GTAV.Lamance.1.32",icon:"icons/gtav.png",eng_detail:"Active Lamance Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Lamance برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
+     {name:"GTAV.BeefQueef.1.33",icon:"icons/gtav.png",eng_detail:"Active BeefQueef Trainer for Grand Theft Auto V Game Version 1.33 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر BeefQueef برای بازی Grand Theft Auto V نسخه 1.33 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	 
 	],
     themes:[
 	{url:"1.jpg",animated:false,selected:false},
@@ -320,24 +334,31 @@ window.failCounter.innerHTML=localStorage.failcount;
 	 if(key==34){//load Web Activator
 	 PLfile="";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Web Activator ...</div>"; window.location.href = "./activator/index.html";}
-     if(key==35){//load GTAV
+     
+     if(key==35){
+       this.isPayloadShow=false;
+       this.isGtaShow=true;
+     }
+
+     if(key=="gta0"){//load GTAV
 	 PLfile="GTAV100.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ArabicGuy V1.00 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
-     if(key==36){//load GTAV
+     if(key=="gta1"){//load GTAV
 	 PLfile="GTAV127.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ArabicGuy V1.27 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
-     if(key==37){//load GTAV
+     if(key=="gta2"){//load GTAV
 	 PLfile="GTA132.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV ArabicGuy V1.32 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
-     if(key==38){//load GTAV
+     if(key=="gta3"){//load GTAV
 	 PLfile="GTAVLamance132.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV Lamance V1.32 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
-     if(key==39){//load GTAV
+     if(key=="gta4"){//load GTAV
 	 PLfile="GTAVBeefQueefMod133.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV BeefQueef V1.33 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
 	},
     showMain:function(){
      this.isPayloadShow = true
+     this.isGtaShow = false
      this.isThemesShow = false
      this.isAboutUsShow = false
      this.isLoaderShow = true
@@ -393,12 +414,23 @@ window.failCounter.innerHTML=localStorage.failcount;
     },
     hover:function(key){
      if(key !== undefined){
+      var chars = key.toString().substring(0,3);
+      var nums = key.toString().substring(3)
+     console.log(nums)
       this.isDetailShow = true
       if(this.lang=="fa"){
-       document.getElementById("detail").innerHTML=this.payloads[key].fa_detail
+       if(chars=="gta"){
+        document.getElementById("detail").innerHTML=this.GTA[nums].fa_detail
+       }else{
+        document.getElementById("detail").innerHTML=this.payloads[key].fa_detail
+       }
       }
       if(this.lang=="eng"){
-       document.getElementById("detail").innerHTML=this.payloads[key].eng_detail
+        if(chars=="gta"){
+        document.getElementById("detail").innerHTML=this.GTA[nums].eng_detail
+       }else{
+        document.getElementById("detail").innerHTML=this.payloads[key].eng_detail
+       }
       }
      }else{
       this.isDetailShow = false
@@ -422,7 +454,7 @@ window.failCounter.innerHTML=localStorage.failcount;
    created(){
     this.themes[this.selectedTheme].selected=true
     this.changeTheme(this.selectedTheme)
-    fetch('counter.php?from=672_new2')
+    
    },
    loadtrainer:function(){
    var link = document.createElement('a');
@@ -526,7 +558,8 @@ window.failCounter.innerHTML=localStorage.failcount;
 
   }
   
-  setInterval(showdate,0);
+  setInterval(showdate,10000);
+  showdate()
  </script>
  <script>
 parent.ldbar = ldbar;
