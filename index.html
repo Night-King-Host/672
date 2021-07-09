@@ -70,7 +70,7 @@
   <div id="gta" class="payloads" v-show="isGtaShow"><!-- gta payloads list start -->
   
     <div class="tile" @mouseover="Backhover()" @mouseleave="hover()" @click="showMain()">
-     <img src="icons/gtav.png" >
+     <img src="icons/return_to_main_menu.png" >
      <p class="white-text" >{{changeText("بازگشت به منو","Back To Menu")}}</p>
     </div>
     
@@ -206,9 +206,9 @@ window.failCounter.innerHTML=localStorage.failcount;
      {name:"Linux.Baikal",icon:"icons/linux.png",eng_detail:"Linux for baikal version",fa_detail:"لودر مخصوص لینوکس با پشتیبانی از چیپ Baikal."},
      {name:"Linux.Internal",icon:"icons/linux.png",eng_detail:"Boot Linux from internal HDD",fa_detail:"لودر مخصوص اجرای لینوکس از طریق  HDD داخلی."},
      {name:"Rif.Renamer",icon:"icons/ps4debug.png",eng_detail:"Rif Renamer v1 By AIAzif - Changes the installed games Licence type from FAKE to FREE - Use this to fix games that will not work with regular HEN if you originally installed games using MiraHen you might have this problem.",fa_detail:"تغییر لایسنس بازیهای نصب شده که با ارسال پیلود Hen قفل آنها باز نمیشود (بدلیل نصب بازی با MiraHen) - پس از ارسال این پیلود مشکل مذکور برطرف خواهد شد!"},
-     {name:"Web Activator",icon:"icons/Web_Activitore.png",eng_detail:"PS4 Offline Account Activator is a Web payload to activate your PSN accounts on Jailbroken PS4 consoles for exporting save data to USB and more! ",fa_detail:"پیلودی برای اکتیو کردن حساب پی اس ان شما بمنظور کپی کردن فایل سیو بازیها در حافظه ی یو اس بی و ... !"},
-     {name:"GTAV PAYLOADS",icon:"icons/gtav.png",eng_detail:"GTA V trainers section",fa_detail:"ترینر های GTA V"},
-     {name:"Offline.Trainer",icon:"icons/Webrte.png",eng_detail:"PS4 OFFLINE TRAINER",fa_detail:"ترینر آفلاین"},
+     {name:"GTA V Trainers",icon:"icons/gtav.png",eng_detail:"Grand Theft Auto V Trainer List",fa_detail:"لیست ترینهای بازی Grand Theft Auto V"},
+	 {name:"Web Activator",icon:"icons/Web_Activitore.png",eng_detail:"PS4 Offline Account Activator is a Web payload to activate your PSN accounts on Jailbroken PS4 consoles for exporting save data to USB and more! ",fa_detail:"پیلودی برای اکتیو کردن حساب پی اس ان شما بمنظور کپی کردن فایل سیو بازیها در حافظه ی یو اس بی و ... !"},
+	 {name:"Offline Trainer",icon:"icons/Webrte.png",eng_detail:"PS4 OFFLINE TRAINER",fa_detail:"ترینر آفلاین"},
      ],
 
     GTA:[
@@ -337,19 +337,19 @@ window.failCounter.innerHTML=localStorage.failcount;
 	 if(key==33){//load RifRenamer
 	 PLfile="rifrenamer.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Rifrenaimer ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
-	 if(key==34){//load Web Activator
-	 PLfile="";
-     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Web Activator ...</div>"; window.location.href = "./activator/index.html";}
-     
-     if(key==35){
+	 if(key==34){
        this.isPayloadShow=false;
        this.isGtaShow=true;
        document.getElementById("detail").style.marginTop="25%"
-     }
+     }	
+	 
+	 if(key==35){//load Web Activator
+	 PLfile="";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Web Activator ...</div>"; window.location.href = "./activator/index.html";}
      
    if(key==36){
       window.location.href = "http://night-king-host.com/Trainer/index.html";
-   }
+     }
 
      if(key=="gta0"){//load GTAV
 	 PLfile="GTAV100.bin";
@@ -463,11 +463,11 @@ window.failCounter.innerHTML=localStorage.failcount;
     Backhover:function(){
        this.isDetailShow = true
       if(this.lang=="fa"){
-       document.getElementById("detail").innerHTML="بازگشت به منو قبلی"
+       document.getElementById("detail").innerHTML="بازگشت به منوی اصلی"
       
       }
       if(this.lang=="eng"){
-        document.getElementById("detail").innerHTML="Bach to main menu"
+        document.getElementById("detail").innerHTML="Return to the main menu"
       }
     }
    },
