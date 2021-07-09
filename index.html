@@ -183,9 +183,9 @@ window.failCounter.innerHTML=localStorage.failcount;
      {name:"Update Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games Update to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از آپدیت بازی در کنسول فراهم می گردد"},
 	 {name:"G+U Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games + Update  to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از دیسک بازی و آپدیت بازی در کنسول فراهم می گردد"},
 	 {name:"G+U.M Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games + Update merge to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از دیسک بازی و آپدیت بازی بصورت ادغام در کنسول فراهم می گردد"},
-     {name:"FTP",icon:"icons/ftp.png",eng_detail:"A full access FTP server for the PS4 Connect your FTP client to the IP address that the popup message tells you. The FTP port number is 1337.",fa_detail:"ایجاد بستر ارتباطی لازم جهت اتصال کامپیوتر و کنسول ps4 شما توسط ftp بمنظور مدیریت فایلها"}, 
+	 {name:"Kernel Dumper",icon:"icons/kdumper.png",eng_detail:"Dump a copy of your kernel to your USB drive. Your kernel will be dumped to: KernelDump.bin on your USB drive.",fa_detail:"تهیه ی نسخه ی کپی از کرنل کنسول شما در حافظه ی جانبی با فرمت xfat یا fat32 بصورت فایلی با نام KernelDump.bin"},
+	 {name:"FTP",icon:"icons/ftp.png",eng_detail:"A full access FTP server for the PS4 Connect your FTP client to the IP address that the popup message tells you. The FTP port number is 1337.",fa_detail:"ایجاد بستر ارتباطی لازم جهت اتصال کامپیوتر و کنسول ps4 شما توسط ftp بمنظور مدیریت فایلها"}, 
 	 {name:"App To USB",icon:"icons/app2usb.png",eng_detail:"Move installed games to an external USB drive. Put AppToUsb.ini in folder named PS4 on root of your USB drive.",fa_detail:"انتقال بازی های نصب شده از کنسول به حافظه خارجی با فرمت exfat"},
-     {name:"Kernel Dumper",icon:"icons/kdumper.png",eng_detail:"Dump a copy of your kernel to your USB drive. Your kernel will be dumped to: KernelDump.bin on your USB drive.",fa_detail:"تهیه ی نسخه ی کپی از کرنل کنسول شما در حافظه ی جانبی با فرمت xfat یا fat32 بصورت فایلی با نام KernelDump.bin"},
 	 {name:"History Blocker",icon:"icons/history_blocker.png",eng_detail:"Disable the auto opening of the last page used in the PS4 WebBrowser. Run the payload again to disable this feature.",fa_detail:"غیر فعالسازی بازکردن خودکار آخرین صفحه ای که در مرورگر PS4 شما استفاده شده است ، برای بازگشت به حالت نرمال مجددا این پیلود را ارسال کنید!"},
      {name:"Disable Update",icon:"icons/disableupdate.png",eng_detail:"Creates dummy files in the PS4 update folder to prevent the download of unwanted system updates. It also deletes any existing updates if they already exist. You only ever have to run this once !",fa_detail:"غیرفعال سازی آپدیت فریمور کنسول"},
      {name:"Enable Update",icon:"icons/enableupdate.png",eng_detail:"Removes the dummy files in the PS4 update folder to enable the download of updates again. Run this if you have previously disabled updates and wish to update your console.",fa_detail:"فعالسازی مجدد آپدیت فریمور کنسول"},
@@ -265,15 +265,15 @@ window.failCounter.innerHTML=localStorage.failcount;
 	 if(key==10){//load dumper
 	 PLfile="pl_DumperM.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
-	 if(key==11){//load ftp
-	 PLfile="pl_FTP.bin";
-     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading FTP ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
-	 if(key==12){//load app2usb
-	 PLfile="pl_app2usb.bin";
-     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading APP2USB ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
-     if(key==13){//load kerneldump
+	 if(key==11){//load kerneldump
 	 PLfile="pl_kernelDumper.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Kernel Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==12){//load ftp
+	 PLfile="pl_FTP.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading FTP ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==13){//load app2usb
+	 PLfile="pl_app2usb.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading APP2USB ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
 	 if(key==14){//load historyblock
 	 PLfile="pl_historyBlocker.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading History Blocker ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
@@ -347,7 +347,7 @@ window.failCounter.innerHTML=localStorage.failcount;
 	 PLfile="";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Web Activator ...</div>"; window.location.href = "./activator/index.html";}
      
-   if(key==36){
+     if(key==36){
       window.location.href = "http://night-king-host.com/Trainer/index.html";
      }
 
