@@ -45,7 +45,6 @@
 
   
   <div class="loader" v-if="isLoaderShow">
-  <a href= "http://night-king-host.com/Trainer/index.html" style="color: white;padding-right:85px;font-size:25px;font-weight:900;text-shadow: 4px 4px 4px black;">PS4 Offline Trainer</a>
    <a  class="button" style="color: green;text-shadow: 4px 4px 4px black; font-weight: bold;">Pass = <span id=passCounter></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 
   <span id="msgs2" style="text-shadow: 4px 4px 4px black;">
@@ -70,7 +69,7 @@
 
   <div id="gta" class="payloads" v-show="isGtaShow"><!-- gta payloads list start -->
   
-    <div class="tile" @click="showMain()">
+    <div class="tile" @mouseover="Backhover()" @mouseleave="hover()" @click="showMain()">
      <img src="icons/gtav.png" >
      <p class="white-text" >{{changeText("بازگشت به منو","Back To Menu")}}</p>
     </div>
@@ -208,14 +207,15 @@ window.failCounter.innerHTML=localStorage.failcount;
      {name:"Linux.Internal",icon:"icons/linux.png",eng_detail:"Boot Linux from internal HDD",fa_detail:"لودر مخصوص اجرای لینوکس از طریق  HDD داخلی."},
      {name:"Rif.Renamer",icon:"icons/ps4debug.png",eng_detail:"Rif Renamer v1 By AIAzif - Changes the installed games Licence type from FAKE to FREE - Use this to fix games that will not work with regular HEN if you originally installed games using MiraHen you might have this problem.",fa_detail:"تغییر لایسنس بازیهای نصب شده که با ارسال پیلود Hen قفل آنها باز نمیشود (بدلیل نصب بازی با MiraHen) - پس از ارسال این پیلود مشکل مذکور برطرف خواهد شد!"},
      {name:"Web Activator",icon:"icons/Web_Activitore.png",eng_detail:"PS4 Offline Account Activator is a Web payload to activate your PSN accounts on Jailbroken PS4 consoles for exporting save data to USB and more! ",fa_detail:"پیلودی برای اکتیو کردن حساب پی اس ان شما بمنظور کپی کردن فایل سیو بازیها در حافظه ی یو اس بی و ... !"},
-     {name:"GTAV PAYLOADS",icon:"icons/gtav.png",eng_detail:"",fa_detail:""},
+     {name:"GTAV PAYLOADS",icon:"icons/gtav.png",eng_detail:"GTA V trainers section",fa_detail:"ترینر های GTA V"},
+     {name:"Offline.Trainer",icon:"icons/Webrte.png",eng_detail:"PS4 OFFLINE TRAINER",fa_detail:"ترینر آفلاین"},
      ],
 
     GTA:[
      {name:"GTAV.ArabicGuy.1.00",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.00 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+L1",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.00 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان L1+R1 را بفشارید."},
      {name:"GTAV.ArabicGuy.1.27",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.27 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.27 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	
      {name:"GTAV.ArabicGuy.1.32",icon:"icons/gtav.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
-	   {name:"GTAV.Lamance.1.32",icon:"icons/gtav.png",eng_detail:"Active Lamance Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Lamance برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
+	    {name:"GTAV.Lamance.1.32",icon:"icons/gtav.png",eng_detail:"Active Lamance Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Lamance برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
      {name:"GTAV.BeefQueef.1.33",icon:"icons/gtav.png",eng_detail:"Active BeefQueef Trainer for Grand Theft Auto V Game Version 1.33 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر BeefQueef برای بازی Grand Theft Auto V نسخه 1.33 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	 
 	],
     themes:[
@@ -344,7 +344,12 @@ window.failCounter.innerHTML=localStorage.failcount;
      if(key==35){
        this.isPayloadShow=false;
        this.isGtaShow=true;
+       document.getElementById("detail").style.marginTop="25%"
      }
+     
+   if(key==36){
+      window.location.href = "http://night-king-host.com/Trainer/index.html";
+   }
 
      if(key=="gta0"){//load GTAV
 	 PLfile="GTAV100.bin";
@@ -368,7 +373,8 @@ window.failCounter.innerHTML=localStorage.failcount;
      this.isThemesShow = false
      this.isAboutUsShow = false
      this.isLoaderShow = true
-	   this.isDonationShow = false
+	    this.isDonationShow = false
+     document.getElementById("detail").style.marginTop="2%"
     },
     showTheme:function(){
      this.isLoaderShow = false
@@ -422,7 +428,6 @@ window.failCounter.innerHTML=localStorage.failcount;
      if(key !== undefined){
       var chars = key.toString().substring(0,3);
       var nums = key.toString().substring(3)
-     console.log(nums)
       this.isDetailShow = true
       if(this.lang=="fa"){
        if(chars=="gta"){
@@ -454,6 +459,16 @@ window.failCounter.innerHTML=localStorage.failcount;
     },
     retLang:function(){
      return this.lang;
+    },
+    Backhover:function(){
+       this.isDetailShow = true
+      if(this.lang=="fa"){
+       document.getElementById("detail").innerHTML="بازگشت به منو قبلی"
+      
+      }
+      if(this.lang=="eng"){
+        document.getElementById("detail").innerHTML="Bach to main menu"
+      }
     }
    },
    
