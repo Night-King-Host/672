@@ -33,6 +33,7 @@ icon.woff2
 index.html
 jb.js
 jb2.js
+jb3.js
 linuxbaikal.bin
 linuxhdd.bin
 main.css
@@ -70,8 +71,8 @@ rifrenamer.bin
 spoofer.bin
 vue.js
 WebRTE.bin
-icons\a.png
 icons\app2usb.png
+icons\back to main menu.png
 icons\backup.png
 icons\binloader.png
 icons\disableupdate.png
@@ -83,16 +84,21 @@ icons\ftp.png
 icons\GTAV.png
 icons\hen.png
 icons\history_blocker.png
+icons\jailbreak.png
 icons\kdumper.png
 icons\keydumper.png
 icons\linux.png
+icons\Mira Unofficial.png
+icons\Mira.png
 icons\Offline_Trainer.png
 icons\OrbisToolbox.png
 icons\ps4debug.png
 icons\RDR2.png
 icons\remote.png
 icons\restore.png
+icons\rif renamer.png
 icons\Rockstar_Trainers.png
+icons\spoofer.png
 icons\Todex_Todev_Tokratos.png
 icons\Webrte.png
 icons\Web_Activitore.png
