@@ -61,6 +61,7 @@ function makeUI()
         var tr = document.createElement('tr');
         tbl.appendChild(tr);
         var username = document.createElement('td');
+        username.style.color='white';
         tr.appendChild(username);
         var tdId = document.createElement('td');
         tr.appendChild(tdId);
@@ -78,6 +79,8 @@ function makeUI()
         var tdButton = document.createElement('td');
         tr.appendChild(tdButton);
         var button = document.createElement('button');
+        button.style.backgroundColor='orangered';
+        button.style.color='white';
         tdButton.appendChild(button);
         button.appendChild(document.createTextNode('Set & Activate'));
         fields.push({username: username, id: id, base64: base64, button: button});
@@ -109,7 +112,6 @@ function fetchAccount(i)
         var italic = document.createElement('i');
         ui[i].username.appendChild(italic);
         italic.appendChild(document.createTextNode('Account does not exist'));
-        ui[i].id.color = 'white';
         ui[i].id.value = '';
         ui[i].id.readOnly = true;
         ui[i].base64.value = '';
@@ -136,7 +138,6 @@ function fetchAccount(i)
         }
         b64_id = b64_id.substr(0, 11) + '=';
         ui[i].username.appendChild(document.createTextNode(mailbox.account_name));
-        ui[i].id.color = 'white';
         ui[i].id.value = string_id;
         ui[i].id.readOnly = false;
         ui[i].base64.value = b64_id;
