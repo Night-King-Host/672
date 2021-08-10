@@ -65,12 +65,14 @@ function makeUI()
         var tdId = document.createElement('td');
         tr.appendChild(tdId);
         var id = document.createElement('input');
+        id.style.backgroundColor='grey';
         id.style.color='white';
         tdId.appendChild(id);
         var tdBase64 = document.createElement('td');
         tr.appendChild(tdBase64);
         var base64 = document.createElement('input');
         base64.readOnly = true;
+        base64.style.backgroundColor='grey';
         base64.style.color='white';
         tdBase64.appendChild(base64);
         var tdButton = document.createElement('td');
