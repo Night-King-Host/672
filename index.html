@@ -285,7 +285,7 @@ window.failCounter.innerHTML=localStorage.failcount;
 	 if(key==7){//load binloader
 	 PLfile="binLoader.bin";
      txt0.innerHTML="<div>Binloader Loading...</div>"; txt2.innerHTML="After Load, Send Payload To Port 9021"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
-  if(key==8){//load ftp
+     if(key==8){//load ftp
 	 PLfile="pl_FTP.bin";
      SALT.style.display = 'block';payloads.style.display = 'none';detail.style.display = 'none';txt0.innerHTML="<div>Loading FTP ...</div>"; var script = document.createElement('script');script.src = "exp_loader.js";document.getElementsByTagName('head')[0].appendChild(script);}
 	 if(key==9){//load app2usb
