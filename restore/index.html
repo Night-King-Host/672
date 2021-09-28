@@ -1,38 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NIGHT KING Restore in Users Guide</title>
-<script>
-function load_payload() {
-  document.write('<script src="loader.js"><\/scr' + 'ipt><script src="payload.js"><\/scr' + 'ipt><script src="c-code.js"><\/scr' + 'ipt><script>payload_finished();<\/scr' + 'ipt>');
-}
-
-function payload_finished() {
-  document.write("<h1 style='color:blue;font-size: 45px;'>Payload Success [SALT]!</h1>");
-  //read_ptr_at(0);
-}
-
-function check_jb_finished() {
-  if (main_ret == 179 || main_ret == 0) {
-    document.write("<h1 style='color:blue;font-size: 45px;'>Jailbreak Success! Loading payload, please wait...</h1>");
-    //read_ptr_at(0);
-    setTimeout(function(){ load_payload() }, 1500);
-  } else {
-    document.write("<h1 style='color:red;font-size: 45px;'>Jailbreak failed! <br> Reboot your device and try again.</h1>");
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THIS IS NOT 404 ERROR!</title>
+<style type="text/css">
+ body {
+ margin:0;
+ padding:0;
+ background:#FFF9C4;
+ text-align:center;
+ direction:rtl;
+ }
+ .text {
+  width:85%;
+  height:40%;
+  font-size:160%;
+  margin-right:8%;
+  padding:10px;
+  background:#FFF59D;
+  font-weight:900;
+ }
+ .text p{
+  text-align:justify;
+  font-size:135%;
+  font-weight:500;
+ }
+ 
+ @media (max-width: 767px) {
+  .text{
+  font-size:80%;
   }
-}
-</script>
+  .text p{
+  font-size:120%;
+  }
+ }
+</style>
 </head>
 <body>
-<script>
-     var userAgent = navigator.userAgent;     
-     if (userAgent.indexOf("PlayStation 4 6.72") != -1) {
-     document.write('<script src="exploit.js"><\/scr' + 'ipt><script src="jailbreak.js"><\/scr' + 'ipt><script>check_jb_finished();<\/scr' + 'ipt>');
-     }              else {
-      document.write('<script src="exploit.js"><\/scr' + 'ipt><script>load_payload();<\/scr' + 'ipt>');
-     }
-</script>
+ <div class="text" >
+  <h1>NIGHT KING PS4 HOST IS IN nightkinghost.com NOW<br><br>این صفحه منتقل شده است</h1><br>
+  <p>کاربر گرامی : سلف هاست Night King  برای PS4 به آدرس جدید در com. منتقل شده است!<br>
+  <br>
+   click <a href="https://nightkinghost.com/" > here</a>&nbsp;if you are not redirected to the .com page for another
+    <span id="num" >1000</span></a>&nbsp;seconds</p>
+ </div>
+ <script type="text/javascript">
+ var num = 15;
+ function change(){
+  document.getElementById("num").innerHTML = num;
+  num--;
+  if(document.getElementById("num").innerHTML=="0"){
+  clearInterval(inter);
+  window.location.assign("https://nightkinghost.com/");
+  }
+ }
+ var inter= setInterval(change,1000);
+  
+ </script>
 </body>
 </html>
